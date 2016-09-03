@@ -84,7 +84,7 @@ var Player = function() {
     this.gameOver = function() {
         this.x = 404;
         this.y = 565;
-        this.score = 0;
+        this.score--;
     };
     this.restart = function() {
         this.x = 404;
