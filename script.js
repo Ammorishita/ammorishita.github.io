@@ -8,6 +8,14 @@ let player;
 let canvasWidth = window.innerWidth;
 let canvasHeight = window.innerHeight;
 let colors = ['red','lime','dodgerblue','cyan'];
+
+var gyroPresent = false;
+window.addEventListener("devicemotion", function(event){
+    if(event.rotationRate.alpha || event.rotationRate.beta || event.rotationRate.gamma)
+        gyroPresent = true;
+    alert('gyro')
+});
+
 let app = {
     init: function() {
         window.addEventListener('keydown', this.playerMove, false);
