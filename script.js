@@ -11,8 +11,15 @@ let colors = ['red','lime','dodgerblue','cyan'];
 
 var gyroPresent = false;
 window.addEventListener("devicemotion", function(event){
-    if(event.rotationRate.alpha || event.rotationRate.beta || event.rotationRate.gamma)
+    alert(event.rotationRate.alpha);
+    if(event.rotationRate.alpha || event.rotationRate.beta || event.rotationRate.gamma) {
         gyroPresent = true;
+        console.log('test');
+        var x = event.accelerationIncludingGravity.x;
+        var y = event.accelerationIncludingGravity.y;
+        var z = event.accelerationIncludingGravity.z; 
+        console.log(x,y,z)      
+    }
 });
 
 let app = {
