@@ -11,7 +11,7 @@ let colors = ['red','lime','dodgerblue','cyan'];
 let alphaInfo = document.querySelector('.alpha');
 let betaInfo = document.querySelector('.beta');
 let gammaInfo = document.querySelector('.gamma');
-
+let lockOrientation;
 var gyroPresent = false;
 
 window.addEventListener("devicemotion", function(event){
@@ -25,6 +25,8 @@ window.addEventListener("devicemotion", function(event){
 
 let app = {
     init: function() {
+        lockOrientation = screen.lockOrientation || screen.mozLockOrientation || screen.msLockOrientation || screen.orientation.lock;
+        lockOrientation('portrait');
         window.addEventListener('keydown', this.playerMove, false);
         window.addEventListener('deviceorientation', this.checkRotation, false);
         canvas.addEventListener('click', this.cannon, false);
