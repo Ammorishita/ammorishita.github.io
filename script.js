@@ -3,28 +3,30 @@
 let canvas = document.getElementById('canvas');
 let c = document.getElementById('canvas').getContext('2d');
 canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+canvas.height = 400;
 let player;
 let canvasWidth = window.innerWidth;
 let canvasHeight = window.innerHeight;
 let colors = ['red','lime','dodgerblue','cyan'];
+let alphaInfo = document.querySelector('.alpha');
+let betaInfo = document.querySelector('.beta');
+let gammaInfo = document.querySelector('.gamma');
 
 var gyroPresent = false;
+
 window.addEventListener("devicemotion", function(event){
-    alert(event.rotationRate.alpha);
     if(event.rotationRate.alpha || event.rotationRate.beta || event.rotationRate.gamma) {
         gyroPresent = true;
-        console.log('test');
         var x = event.accelerationIncludingGravity.x;
         var y = event.accelerationIncludingGravity.y;
         var z = event.accelerationIncludingGravity.z; 
-        console.log(x,y,z)      
     }
 });
 
 let app = {
     init: function() {
         window.addEventListener('keydown', this.playerMove, false);
+        window.addEventListener('deviceorientation', this.checkRotation, false);
         canvas.addEventListener('click', this.cannon, false);
         this.particles = null;
         this.lasers = [];
@@ -32,6 +34,14 @@ let app = {
         this.createParticles();
         this.animateParticles();
         //this.difficulty();
+    },
+    checkRotation: function(event) {
+        let alpha = event.alpha;
+        let beta = event.beta;
+        let gamma = event.gamma;
+        alphaInfo.innerHTML = alpha;
+        betaInfo.innerHTML = beta;
+        gammaInfo.innerHTML = gamma;
     },
     randomNum(min,max) {
         return Math.floor(Math.random() * (max - min + 1) + min);

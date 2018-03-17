@@ -12,3 +12,6 @@ html, body {
     margin: auto;
     display: block;
 }
+.info {
+	color: lime;
+}
