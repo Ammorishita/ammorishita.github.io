@@ -13,7 +13,6 @@ var gyroPresent = false;
 window.addEventListener("devicemotion", function(event){
     if(event.rotationRate.alpha || event.rotationRate.beta || event.rotationRate.gamma)
         gyroPresent = true;
-    alert('gyro')
 });
 
 let app = {
