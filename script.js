@@ -25,13 +25,12 @@ window.addEventListener("devicemotion", function(event){
 
 let app = {
     init: function() {
-        screen.orientation.lock('portrait')
         window.addEventListener('keydown', this.playerMove, false);
         window.addEventListener('deviceorientation', this.checkRotation, false);
         canvas.addEventListener('click', this.cannon, false);
         this.particles = null;
         this.lasers = [];
-        player = new this.Player(350, 350, 50, 'lime');
+        player = new this.Player((canvasWidth/2), (canvasHeight/4), 50, 'lime');
         this.createParticles();
         this.animateParticles();
         //this.difficulty();
@@ -40,6 +39,18 @@ let app = {
         let alpha = event.alpha;
         let beta = event.beta;
         let gamma = event.gamma;
+        let direction;
+        window.requestAnimationFrame(function() {
+            app.checkRotation(event);
+            if(gamma <= -5 && gamma >= -20) {
+                direction = 'left';
+            } else if (gamma > 5 && gamma <= 20) {
+                direction = 'right';
+            } else {
+                direction = 'straight';
+            }
+            player.slide(direction);
+        });
         alphaInfo.innerHTML = alpha;
         betaInfo.innerHTML = beta;
         gammaInfo.innerHTML = gamma;
@@ -140,7 +151,8 @@ let app = {
             c.strokeStyle="blue";
             c.rect(this.originX,this.originY,25,25);
             c.stroke();
-        }  
+        }
+
     },
     Player: function(x,y,size,color) {
         this.x = x;
@@ -176,9 +188,24 @@ let app = {
         }
         this.draw = function() {
             c.rect(this.x,this.y,size,size);
-            c.strokeStyle(color)
             c.stroke();     
-        }        
+        },
+        this.slide = function(direction) {
+            if(direction === 'left') {
+                this.x -= 1;
+            } else if (direction === 'right') {
+                this.x += 1;
+
+            } else if (direction === 'straight') {
+                this.x += 0;
+            }
+            if (this.x + this.size > canvasWidth) {
+                this.x -= 1;
+            } else if ( this.x - this.size < 0 ) {
+                this.x += 1;
+            }
+            this.draw();
+        }   
     },
     playerMove: function(e) {
         switch(e.keyCode){
