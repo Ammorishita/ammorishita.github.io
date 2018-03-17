@@ -25,8 +25,7 @@ window.addEventListener("devicemotion", function(event){
 
 let app = {
     init: function() {
-        screen.lockOrientation('portrait');
-        screen.orientation.lock('portrait');
+        screen.orientation.lock('portrait')
         window.addEventListener('keydown', this.playerMove, false);
         window.addEventListener('deviceorientation', this.checkRotation, false);
         canvas.addEventListener('click', this.cannon, false);
