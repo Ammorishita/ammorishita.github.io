@@ -2,9 +2,11 @@
 'use strict';
 let canvas = document.getElementById('canvas');
 let c = document.getElementById('canvas').getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
 let player;
-let canvasWidth = 500;
-let canvasHeight = 600;
+let canvasWidth = window.innerWidth;
+let canvasHeight = window.innerHeight;
 let colors = ['red','lime','dodgerblue','cyan'];
 let app = {
     init: function() {
