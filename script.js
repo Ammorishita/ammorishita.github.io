@@ -92,7 +92,8 @@ Controller.prototype = {
     },
     checkMotion: function() {
         if(this.oldBeta < this.beta) {
-            if(this.stopMeasuringUp === false) {
+            let dy = this.beta - this.oldBeta;
+            if(this.stopMeasuringUp === false && dy > 1) {
                 this.startDate = new Date();
                 this.stopMeasuringUp = true;
             }
