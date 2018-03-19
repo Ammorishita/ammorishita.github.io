@@ -83,6 +83,9 @@ Controller.prototype = {
         } else if (this.gamma <= 5 && this.gamma > -4) {
             this.model.player.direction = 'straight';
         }
+        if(this.direction === 'jumped') {
+            this.model.player.direction = 'jumped';
+        }
         this.oldBeta = this.beta;
         this.oldGamma = this.gamma;
         this.oldAlpha = this.alpha;
@@ -108,7 +111,9 @@ Controller.prototype = {
             if(difference > 50 && difference < 200) {
                 console.log('flicked the phone up')
                 this.flicked.innerHTML = 'jumped!';
-                window.setTimeout(this.reset.bind(this),500);
+                this.direction = 'jumped';
+                this.model.player.jumping = true;
+                window.setTimeout(this.reset.bind(this),1500);
             }
         }
         this.stopMeasuringDown = false;
@@ -116,6 +121,8 @@ Controller.prototype = {
     },
     reset: function() {
         this.flicked.innerHTML = '';
+        this.model.player.falling = true;
+        this.model.player.jumping = false;
     },
     checkRotation: function(e) {
         this.alpha = e.alpha;
@@ -162,8 +169,18 @@ Player.prototype.update = function() {
     } else if ( this.x < 0 ) {
         this.x += 2;
     }
-    if(this.direction === 'jump') {
-
+    if(this.direction === 'jumped') {
+        if (this.size >= 50 && this.jumping === true) {
+            this.size += .4;
+            this.y -= 1;
+        }
+        if (this.size > 70 && this.jumping === true) {
+            this.jumping = false;
+        }
+        if (this.jumping === false && this.size > 50) {
+            this.size -= .4;
+            this.y += 1;
+        }
     }
     this.draw();
 };
