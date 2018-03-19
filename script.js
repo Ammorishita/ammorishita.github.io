@@ -64,6 +64,9 @@ Controller.prototype = {
         this.canvas = this.view.canvas.canvas;
         window.addEventListener('deviceorientation', this.checkRotation.bind(this), false);
         this.canvas.addEventListener('click', this.weaponInit.bind(this), false);
+        this.alphaEl = document.querySelector('.alpha');
+        this.betaEl = document.querySelector('.beta');
+        this.gammaEl = document.querySelector('.gamma');
     },
     render: function() {
         //console.log(this.model.player.direction);
@@ -85,10 +88,15 @@ Controller.prototype = {
         this.beta = e.beta;
         this.gamma = e.gamma;
         this.direction = 'straight';
+        this.alphaEl.innerHTML = this.alpha;
+        this.betaEl.innerHTML = this.beta;
+        this.gammaEl.innerHTML = this.gamma;
     },
 };
 
-//Global variables and game objects
+/*====================================
+    Global variables and game objects
+=====================================*/
 
 let canvas = document.getElementById('canvas');
 canvas.width = window.innerWidth;
@@ -109,16 +117,16 @@ Player.prototype.draw = function(argument){
 };
 Player.prototype.update = function() {
     if(this.direction === 'left') {
-        this.x -= 1;
+        this.x -= 2;
     } else if (this.direction === 'right') {
-        this.x += 1;
+        this.x += 2;
     } else if (this.direction === 'straight') {
         this.x += 0;
     }
     if (this.x + this.size > canvas.width) {
-        this.x -= 1;
-    } else if ( this.x - this.size < 0 ) {
-        this.x += 1;
+        this.x -= 2;
+    } else if ( this.x < 0 ) {
+        this.x += 2;
     }
     this.draw();
 };
