@@ -63,6 +63,7 @@ Controller.prototype = {
         this.render();
         this.canvas = this.view.canvas.canvas;
         window.addEventListener('deviceorientation', this.checkRotation.bind(this), false);
+        window.addEventListener('devicemotion', this.checkMotion.bind(this), false);
         this.canvas.addEventListener('click', this.weaponInit.bind(this), false);
         this.alphaEl = document.querySelector('.alpha');
         this.betaEl = document.querySelector('.beta');
@@ -83,14 +84,23 @@ Controller.prototype = {
     weaponInit: function(e) {
         this.model.createLaser(e);
     },
+    checkMotion: function(e) {
+        console.log(e.acceleration.x)
+        this.accelX = e.acceleration.x;
+        this.accelY = e.acceleration.y;
+        this.accelZ = e.acceleration.z;
+        this.alphaEl.innerHTML = this.accelY;
+        this.betaEl.innerHTML = this.accelY;
+        this.gammaEl.innerHTML = this.accelZ;        
+    },
     checkRotation: function(e) {
         this.alpha = e.alpha;
         this.beta = e.beta;
         this.gamma = e.gamma;
         this.direction = 'straight';
-        this.alphaEl.innerHTML = this.alpha;
-        this.betaEl.innerHTML = this.beta;
-        this.gammaEl.innerHTML = this.gamma;
+        // this.alphaEl.innerHTML = this.alpha;
+        // this.betaEl.innerHTML = this.beta;
+        // this.gammaEl.innerHTML = this.gamma;
     },
 };
 
@@ -127,6 +137,9 @@ Player.prototype.update = function() {
         this.x -= 2;
     } else if ( this.x < 0 ) {
         this.x += 2;
+    }
+    if(this.direction === 'jump') {
+
     }
     this.draw();
 };
