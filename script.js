@@ -96,36 +96,46 @@ Controller.prototype = {
     },
     checkMotion: function() {
         //Check for upwards movement on the phone
-        if(this.oldBeta < this.beta) {
+        console.log(this.model.player.canJump)
+        if(this.oldBeta < this.beta && this.model.player.canJump === true) {
             let dy = this.beta - this.oldBeta;
             this.dy.innerHTML = dy;
-            if(this.checkingForJump === true && dy > 7) {
-                this.startDate = new Date();
+            if(dy > 7) {
+                console.log('fast movement')
+                //this.startDate = new Date();
                 this.checkingForJump = false;
-                console.log('fast movement up')
+                this.model.player.jumping = true;
+                this.model.player.canJump = false;
+                window.setTimeout(this.descend.bind(this),750);
+                window.setTimeout(this.reset.bind(this),1500);
             }
         //Check for downwards movement on the phone
-        } else if (this.oldBeta > this.beta) {
+        }/* else if (this.oldBeta > this.beta) {
             if(this.fallingDown === false) {
                 this.endDate = new Date();
                 this.fallingDown = true;                
             }
             let difference = (this.endDate.getTime() - this.startDate.getTime());
             console.log(difference)
-            if(difference > 50 && difference < 250) {
+            if(difference > 50 && difference < 250 && this.fallingDown === true) {
                 console.log('flicked the phone up')
                 this.flicked.innerHTML = 'jumped!';
                 this.direction = 'jumped';
+                this.fallingDown = false;
                 this.model.player.jumping = true;
                 window.setTimeout(this.reset.bind(this),1500);
                 console.log('RESEETINGG')
             } else {
-                this.fallingDown = false;
                 this.checkingForJump = true;
             }
-        }
+        }*/
+    },
+    descend: function() {
+        console.log('starting to descend')
+        this.model.player.falling = true;
     },
     reset: function() {
+        console.log('landed')
         this.fallingDown = false;
         this.checkingForJump = true;
         this.flicked.innerHTML = '';
@@ -137,9 +147,6 @@ Controller.prototype = {
         this.beta = e.beta;
         this.gamma = e.gamma;
         this.direction = 'straight';
-        this.alphaEl.innerHTML = this.alpha;
-        this.betaEl.innerHTML = this.beta;
-        this.gammaEl.innerHTML = this.gamma;
     },
 };
 
@@ -156,6 +163,7 @@ let Player = function(x,y,size,color) {
     this.y = y;
     this.color = color;
     this.size = size;
+    this.canJump = true;
     this.direction = null;
     c.rect(x,y,size,size);
     c.stroke();
@@ -177,17 +185,15 @@ Player.prototype.update = function() {
     } else if ( this.x < 0 ) {
         this.x += 2;
     }
-    if(this.direction === 'jumped') {
-        if (this.size >= 50 && this.jumping === true) {
-            this.size += .4;
-            this.y -= 1;
-        }
-        if (this.size > 70 && this.jumping === true) {
-            this.jumping = false;
-        }
-        if (this.jumping === false && this.size > 50) {
-            this.size -= .4;
-            this.y += 1;
+    if(this.jumping === true) {
+        this.size += .4;
+        this.y -= 1;
+    } else if(this.jumping === false && this.falling === true) {
+        this.size -= .4;
+        this.y += 1;
+        if(this.y === (canvas.height-50)) {
+            this.falling = false;
+            this.canJump = true;
         }
     }
     this.draw();
