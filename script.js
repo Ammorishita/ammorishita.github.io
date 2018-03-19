@@ -29,7 +29,7 @@ THE VIEW : Draws all elements on the page
 function View(canvas) {
     this.canvas = canvas;
     this.width = window.innerWidth;
-    this.height = 400;
+    this.height = window.innerHeight;
 };
 View.prototype = {
     init: function() {
@@ -64,6 +64,7 @@ Controller.prototype = {
         this.checkingForJump = true;
         this.fallingDown = false;
         this.canvas = this.view.canvas.canvas;
+        window.addEventListener('resize', this.resizeCanvas.bind(this), false);
         window.addEventListener('deviceorientation', this.checkRotation.bind(this), false);
         window.setInterval(this.checkMotion.bind(this),16);
         this.canvas.addEventListener('click', this.weaponInit.bind(this), false);
@@ -73,14 +74,18 @@ Controller.prototype = {
         this.flicked = document.querySelector('.flicked');
         this.dy = document.querySelector('.dy');
     },
+    resizeCanvas: function() {
+        this.canvas.width = window.innerWidth;
+        this.canvas.height = window.innerHeight;
+    },
     render: function() {
         //console.log(this.model.player.direction);
         window.requestAnimationFrame(this.render.bind(this));
-        if(this.gamma <= -5 && this.gamma >= -20) {
+        if(this.beta <= -5 && this.beta >= -20) {
             this.model.player.direction = 'left';
-        } else if (this.gamma > 5 && this.gamma <= 20) {
+        } else if (this.beta > 5 && this.beta <= 20) {
             this.model.player.direction = 'right';
-        } else if (this.gamma <= 5 && this.gamma > -4) {
+        } else if (this.beta <= 5 && this.beta > -4) {
             this.model.player.direction = 'straight';
         }
         if(this.direction === 'jumped') {
@@ -96,46 +101,25 @@ Controller.prototype = {
     },
     checkMotion: function() {
         //Check for upwards movement on the phone
-        console.log(this.model.player.canJump)
-        if(this.oldBeta < this.beta && this.model.player.canJump === true) {
-            let dy = this.beta - this.oldBeta;
+        if(this.oldGamma < this.gamma && this.model.player.canJump === true) {
+            let dy = this.gamma - this.oldGamma;
             this.dy.innerHTML = dy;
             if(dy > 7) {
-                console.log('fast movement')
                 //this.startDate = new Date();
                 this.checkingForJump = false;
                 this.model.player.jumping = true;
                 this.model.player.canJump = false;
-                window.setTimeout(this.descend.bind(this),750);
-                window.setTimeout(this.reset.bind(this),1500);
+                window.setTimeout(this.descend.bind(this),350);
+                window.setTimeout(this.reset.bind(this),700);
             }
         //Check for downwards movement on the phone
-        }/* else if (this.oldBeta > this.beta) {
-            if(this.fallingDown === false) {
-                this.endDate = new Date();
-                this.fallingDown = true;                
-            }
-            let difference = (this.endDate.getTime() - this.startDate.getTime());
-            console.log(difference)
-            if(difference > 50 && difference < 250 && this.fallingDown === true) {
-                console.log('flicked the phone up')
-                this.flicked.innerHTML = 'jumped!';
-                this.direction = 'jumped';
-                this.fallingDown = false;
-                this.model.player.jumping = true;
-                window.setTimeout(this.reset.bind(this),1500);
-                console.log('RESEETINGG')
-            } else {
-                this.checkingForJump = true;
-            }
-        }*/
+        }
+
     },
     descend: function() {
-        console.log('starting to descend')
         this.model.player.falling = true;
     },
     reset: function() {
-        console.log('landed')
         this.fallingDown = false;
         this.checkingForJump = true;
         this.flicked.innerHTML = '';
@@ -156,7 +140,9 @@ Controller.prototype = {
 
 let canvas = document.getElementById('canvas');
 canvas.width = window.innerWidth;
-canvas.height = 400;
+canvas.height = window.innerHeight;
+let posX = window.innerWidth/2;
+let posY = window.innerHeight - 50;
 let c = document.getElementById('canvas').getContext('2d');
 let Player = function(x,y,size,color) {
     this.x = x;
@@ -306,7 +292,7 @@ Laser.prototype.draw = function(color){
 
 let enemies = [new Enemy(50,-10,10,4,4,'blue'),new Enemy(150,-10,10,4,4,'blue'),new Enemy(250,-10,10,4,4,'blue'),];
 let lasers = [];
-let player = new Player(200,350,50,'black');
+let player = new Player(posX,posY,50,'black');
 let model = new Model(player, enemies, lasers);
 let view = new View(c);
 let controller = new Controller(model,view);
