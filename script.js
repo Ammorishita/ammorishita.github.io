@@ -71,6 +71,7 @@ Controller.prototype = {
         this.betaEl = document.querySelector('.beta');
         this.gammaEl = document.querySelector('.gamma');
         this.flicked = document.querySelector('.flicked');
+        this.dy = document.querySelector('.dy');
     },
     render: function() {
         //console.log(this.model.player.direction);
@@ -93,6 +94,7 @@ Controller.prototype = {
     checkMotion: function() {
         if(this.oldBeta < this.beta) {
             let dy = this.beta - this.oldBeta;
+            this.dy.innerHTML = dy;
             if(this.stopMeasuringUp === false && dy > 1) {
                 this.startDate = new Date();
                 this.stopMeasuringUp = true;
