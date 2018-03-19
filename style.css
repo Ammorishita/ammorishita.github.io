@@ -15,3 +15,7 @@ html, body {
 .info {
 	color: lime;
 }
+.info li {
+	display: inline-block;
+	width: 50%;
+}

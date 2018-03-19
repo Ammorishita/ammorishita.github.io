@@ -83,6 +83,8 @@ Controller.prototype = {
             this.model.player.direction = 'straight';
         }
         this.oldBeta = this.beta;
+        this.oldGamma = this.gamma;
+        this.oldAlpha = this.alpha;
         this.view.render(this.model.enemies, this.model.lasers, this.model.player);
     },
     weaponInit: function(e) {
@@ -99,12 +101,12 @@ Controller.prototype = {
                 this.endDate = new Date();
                 this.stopMeasuringDown = true;                
             }
-            let seconds = (this.endDate.getTime() - this.startDate.getTime());
-            if(seconds > 60 && seconds < 200) {
+            let difference = (this.endDate.getTime() - this.startDate.getTime());
+            if(difference > 50 && difference < 200) {
                 console.log('flicked the phone up')
                 this.flicked.innerHTML = 'jumped!';
             }
-            window.setTimeout(this.reset.bind(this),350);
+            window.setTimeout(this.reset.bind(this),500);
         }
     },
     reset: function() {
