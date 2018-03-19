@@ -62,12 +62,12 @@ Controller.prototype = {
         this.view.init();
         this.render();
         this.canvas = this.view.canvas.canvas;
-        this.gamma = 0;
-        window.addEventListener('deviceorientation', this.checkRotation, false);
+        window.addEventListener('deviceorientation', this.checkRotation.bind(this), false);
         this.canvas.addEventListener('click', this.weaponInit.bind(this), false);
     },
-    render: function(gamma) {
-        window.requestAnimationFrame(this.render.bind(this, this.gamma));
+    render: function() {
+        //console.log(this.model.player.direction);
+        window.requestAnimationFrame(this.render.bind(this));
         if(this.gamma <= -5 && this.gamma >= -20) {
             this.model.player.direction = 'left';
         } else if (this.gamma > 5 && this.gamma <= 20) {
