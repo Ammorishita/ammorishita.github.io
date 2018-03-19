@@ -101,8 +101,8 @@ Controller.prototype = {
     },
     checkMotion: function() {
         //Check for upwards movement on the phone
-        if(this.oldGamma < this.gamma && this.model.player.canJump === true) {
-            let dy = this.gamma - this.oldGamma;
+        if(this.oldBeta < this.beta && this.model.player.canJump === true) {
+            let dy = this.beta - this.oldBeta;
             this.dy.innerHTML = dy;
             if(dy > 7) {
                 //this.startDate = new Date();
