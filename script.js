@@ -61,13 +61,16 @@ Controller.prototype = {
     init: function() {
         this.view.init();
         this.render();
+        this.stopMeasuringUp = false;
+        this.stopMeasuringDown = false;
         this.canvas = this.view.canvas.canvas;
         window.addEventListener('deviceorientation', this.checkRotation.bind(this), false);
-        window.addEventListener('devicemotion', this.checkMotion.bind(this), false);
+        window.setInterval(this.checkMotion.bind(this),50);
         this.canvas.addEventListener('click', this.weaponInit.bind(this), false);
         this.alphaEl = document.querySelector('.alpha');
         this.betaEl = document.querySelector('.beta');
         this.gammaEl = document.querySelector('.gamma');
+        this.flicked = document.querySelector('.flicked');
     },
     render: function() {
         //console.log(this.model.player.direction);
@@ -79,27 +82,44 @@ Controller.prototype = {
         } else if (this.gamma <= 5 && this.gamma > -4) {
             this.model.player.direction = 'straight';
         }
+        this.oldBeta = this.beta;
         this.view.render(this.model.enemies, this.model.lasers, this.model.player);
     },
     weaponInit: function(e) {
         this.model.createLaser(e);
     },
-    checkMotion: function(e) {
-        this.accelX = e.acceleration.x;
-        this.accelY = e.acceleration.y;
-        this.accelZ = e.acceleration.z;
-        this.alphaEl.innerHTML = this.accelY;
-        this.betaEl.innerHTML = this.accelY;
-        this.gammaEl.innerHTML = this.accelZ;        
+    checkMotion: function() {
+        if(this.oldBeta < this.beta) {
+            if(this.stopMeasuringUp === false) {
+                this.startDate = new Date();
+                this.stopMeasuringUp = true;
+            }
+        } else if (this.oldBeta > this.beta) {
+            if(this.stopMeasuringDown === false) {
+                this.endDate = new Date();
+                this.stopMeasuringDown = true;                
+            }
+            let seconds = (this.endDate.getTime() - this.startDate.getTime());
+            if(seconds > 60 && seconds < 200) {
+                console.log('flicked the phone up')
+                this.flicked.innerHTML = 'jumped!';
+            }
+            window.setTimeout(this.reset.bind(this),350);
+        }
+    },
+    reset: function() {
+        this.stopMeasuringDown = false;
+        this.stopMeasuringUp = false;
+        this.flicked.innerHTML = '';
     },
     checkRotation: function(e) {
         this.alpha = e.alpha;
         this.beta = e.beta;
         this.gamma = e.gamma;
         this.direction = 'straight';
-        // this.alphaEl.innerHTML = this.alpha;
-        // this.betaEl.innerHTML = this.beta;
-        // this.gammaEl.innerHTML = this.gamma;
+        this.alphaEl.innerHTML = this.alpha;
+        this.betaEl.innerHTML = this.beta;
+        this.gammaEl.innerHTML = this.gamma;
     },
 };
 
