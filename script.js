@@ -65,7 +65,7 @@ Controller.prototype = {
         this.stopMeasuringDown = false;
         this.canvas = this.view.canvas.canvas;
         window.addEventListener('deviceorientation', this.checkRotation.bind(this), false);
-        window.setInterval(this.checkMotion.bind(this),50);
+        window.setInterval(this.checkMotion.bind(this),16);
         this.canvas.addEventListener('click', this.weaponInit.bind(this), false);
         this.alphaEl = document.querySelector('.alpha');
         this.betaEl = document.querySelector('.beta');
