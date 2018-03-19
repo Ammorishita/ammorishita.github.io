@@ -1,289 +1,239 @@
-(function(){
-'use strict';
+(function() {
+
+'use strict'
+
+/*=====================================
+THE MODEL: Controls the game variables
+=====================================*/
+
+function Model(player, enemies, lasers) {
+    this.player = player;
+    this.enemies = enemies;
+    this.lasers = lasers;
+};
+Model.prototype.createLaser = function(e) {
+    let offsetX = canvas.offsetLeft;
+    let offsetY = canvas.offsetTop;
+    let x = e.clientX - offsetX;
+    let y = e.clientY - offsetY;
+    this.addLaser(x,y);
+};
+Model.prototype.addLaser = function(x,y) {
+    this.lasers.push(new Laser(x,y));
+};
+
+/*=========================================
+THE VIEW : Draws all elements on the page
+======================================== */
+
+function View(canvas) {
+    this.canvas = canvas;
+    this.width = window.innerWidth;
+    this.height = 400;
+};
+View.prototype = {
+    init: function() {
+        this.canvasElement = this.canvas.canvas;
+    },
+    render: function(enemies, lasers, player) {
+        this.canvas.clearRect(0,0,this.width, this.height);
+        this.canvas.fillStyle = 'cyan';
+        this.canvas.fillRect(0,0,this.width, this.height);
+        enemies.forEach(e => {
+            e.update();
+        });
+        lasers.forEach(e => {
+            e.update();
+        });
+        player.update();
+    }
+};
+
+/* ======================================
+THE CONTROLLER: Talks to the model and view
+========================================= */
+
+function Controller(model, view) {
+    this.model = model;
+    this.view = view;
+}
+Controller.prototype = {
+    init: function() {
+        this.view.init();
+        this.render();
+        this.canvas = this.view.canvas.canvas;
+        this.gamma = 0;
+        window.addEventListener('deviceorientation', this.checkRotation, false);
+        this.canvas.addEventListener('click', this.weaponInit.bind(this), false);
+    },
+    render: function(gamma) {
+        window.requestAnimationFrame(this.render.bind(this, this.gamma));
+        if(this.gamma <= -5 && this.gamma >= -20) {
+            this.model.player.direction = 'left';
+        } else if (this.gamma > 5 && this.gamma <= 20) {
+            this.model.player.direction = 'right';
+        } else if (this.gamma <= 5 && this.gamma > -4) {
+            this.model.player.direction = 'straight';
+        }
+        this.view.render(this.model.enemies, this.model.lasers, this.model.player);
+    },
+    weaponInit: function(e) {
+        this.model.createLaser(e);
+    },
+    checkRotation: function(e) {
+        this.alpha = e.alpha;
+        this.beta = e.beta;
+        this.gamma = e.gamma;
+        this.direction = 'straight';
+    },
+};
+
+//Global variables and game objects
+
 let canvas = document.getElementById('canvas');
-let c = document.getElementById('canvas').getContext('2d');
 canvas.width = window.innerWidth;
 canvas.height = 400;
-let player;
-let canvasWidth = window.innerWidth;
-let canvasHeight = window.innerHeight;
-let colors = ['red','lime','dodgerblue','cyan'];
-let alphaInfo = document.querySelector('.alpha');
-let betaInfo = document.querySelector('.beta');
-let gammaInfo = document.querySelector('.gamma');
-let lockOrientation;
-var gyroPresent = false;
-
-window.addEventListener("devicemotion", function(event){
-    if(event.rotationRate.alpha || event.rotationRate.beta || event.rotationRate.gamma) {
-        gyroPresent = true;
-        var x = event.accelerationIncludingGravity.x;
-        var y = event.accelerationIncludingGravity.y;
-        var z = event.accelerationIncludingGravity.z; 
+let c = document.getElementById('canvas').getContext('2d');
+let Player = function(x,y,size,color) {
+    this.x = x;
+    this.y = y;
+    this.color = color;
+    this.size = size;
+    this.direction = null;
+    c.rect(x,y,size,size);
+    c.stroke();
+};
+Player.prototype.draw = function(argument){
+    c.rect(this.x,this.y,this.size,this.size);
+    c.stroke();     
+};
+Player.prototype.update = function() {
+    if(this.direction === 'left') {
+        this.x -= 1;
+    } else if (this.direction === 'right') {
+        this.x += 1;
+    } else if (this.direction === 'straight') {
+        this.x += 0;
     }
-});
-
-let app = {
-    init: function() {
-        window.addEventListener('keydown', this.playerMove, false);
-        window.addEventListener('deviceorientation', this.checkRotation, false);
-        canvas.addEventListener('click', this.cannon, false);
-        this.particles = null;
-        this.lasers = [];
-        player = new this.Player((canvasWidth/2), (canvasHeight/4), 50, 'lime');
-        this.createParticles();
-        this.animateParticles();
-        //this.difficulty();
-    },
-    checkRotation: function(event) {
-        let alpha = event.alpha;
-        let beta = event.beta;
-        let gamma = event.gamma;
-        let direction;
-        window.requestAnimationFrame(function() {
-            app.checkRotation(event);
-            if(gamma <= -5 && gamma >= -20) {
-                direction = 'left';
-            } else if (gamma > 5 && gamma <= 20) {
-                direction = 'right';
-            } else {
-                direction = 'straight';
-            }
-            player.slide(direction);
-        });
-        alphaInfo.innerHTML = alpha;
-        betaInfo.innerHTML = beta;
-        gammaInfo.innerHTML = gamma;
-    },
-    randomNum(min,max) {
-        return Math.floor(Math.random() * (max - min + 1) + min);
-    },
-    randomColor(colors) {
-        return colors[Math.floor(Math.random() * colors.length)];       
-    },
-    cannon: function(e) {
-        let offsetX = canvas.offsetLeft;
-        let offsetY = canvas.offsetTop;
-        let x = e.clientX - offsetX;
-        let y = e.clientY - offsetY;
-        app.createLaser(x,y);
-    },
-    createLaser: function(x,y) {
-        this.lasers.push(new this.Laser(x,y));
-        app.lasers.forEach(laser => {
-            laser.draw();
-        });
-    },
-    createParticles: function() {
-        this.particles = [];
-        for(let i=0;i < 5; i++) {
-            const radius = (Math.random() * 5) + 5;
-            let x = Math.random() * (canvasWidth - radius * 2) + radius;
-            //let y = Math.random() * (canvasHeight - radius * 2) + radius;
-            let y = -10;
-            //let dx = Math.random() * 2 + 2;
-            let dx = 0;
-            let dy = Math.random() * 3 + 2;
-            this.particles.push(new this.Particle(x,y, radius, 'black', dy, dy));
-        }
-    },
-    difficulty: function() {
-        setInterval(function() {
-            const radius = (Math.random() * 5) + 5;
-            let x = Math.random() * (canvasWidth - radius * 2) + radius;
-            //let y = Math.random() * (canvasHeight - radius * 2) + radius;
-            let y = -10;
-            //let dx = Math.random() * 2 + 2;
-            let dx = 0;
-            let dy = Math.random() * 3 + 2;
-            app.particles.push(new app.Particle(x,y, radius, 'black', dy, dy));           
-        },1500)
-    },
-    animateParticles: function() {
-        requestAnimationFrame(app.animateParticles);
-        c.clearRect(0,0,canvasWidth, canvasHeight);
-        c.fillStyle = 'cyan';
-        c.fillRect(0,0,canvasWidth, canvasHeight);
-        if(app.lasers.length > 0) {
-            app.lasers.forEach(laser => {
-                laser.update();
-            });
-        }
-        app.particles.forEach(particle => {
-            particle.update();
-            particle.collision();
-        });
-    },
-    Laser: function(x,y) {
-        this.targetX = x;
-        this.targetY = y;
-        this.height = canvasHeight - this.targetY;
-        if(this.targetX < (canvasWidth/2)) {
-            this.width = this.targetX;
-            this.originX = Math.floor(25);
-            this.originY = Math.floor(canvasHeight - 25);
-        } else {
-            this.width = canvasWidth - this.targetX;
-            this.originX = Math.floor(canvasWidth - 25);
-            this.originY = Math.floor(canvasHeight - 25);
-        }
-        this.magnitude = Math.sqrt(this.width * this.width + this.height * this.height);
-        this.dx = this.width / this.magnitude * 10
-        this.dy = this.height / this.magnitude * 10
-        this.update = function() {
-            if(this.targetX < (canvasWidth/2)) {
-                this.originX += this.dx;
-            } else {
-                this.originX -= this.dx;
-            }
-            this.originY -= this.dy;
-            this.originX = Math.floor(this.originX);
-            this.originY = Math.floor(this.originY);
-            if(this.originX < 0 || this.originX > canvasWidth) {
-                let index = app.lasers.indexOf(this);
-                app.lasers.splice(index,1);
-            } else {
-                this.draw();
-            }
-        },
-        this.draw = function() {
-            c.beginPath();
-            c.strokeStyle="blue";
-            c.rect(this.originX,this.originY,25,25);
-            c.stroke();
-        }
-
-    },
-    Player: function(x,y,size,color) {
-        this.x = x;
-        this.y = y;
-        this.color = color;
-        this.size = size;
-        c.rect(x,y,size,size);
-        c.stroke();
-        this.update = function(e) {
-            switch(e) {
-                //Left, Right, Up, Down
-                case(37):
-                    this.x -= 25;
-                    break;
-                case(39):
-                    this.x += 25;
-                    break;
-                case(38):
-                    this.y -= 25;
-                    break;
-                case(40):
-                    this.y += 25;
-                    break;
-                default:
-                    break;
-            }
-            if (this.x + this.size > canvasWidth || this.x - this.size < 0) {
-                this.x = this.x;
-            }
-            if (this.y + this.size > canvasHeight|| this.y - this.size < 0) {
-                this.y = this.y;
-            }
-        }
-        this.draw = function() {
-            c.rect(this.x,this.y,size,size);
-            c.stroke();     
-        },
-        this.slide = function(direction) {
-            if(direction === 'left') {
-                this.x -= 1;
-            } else if (direction === 'right') {
-                this.x += 1;
-
-            } else if (direction === 'straight') {
-                this.x += 0;
-            }
-            if (this.x + this.size > canvasWidth) {
-                this.x -= 1;
-            } else if ( this.x - this.size < 0 ) {
-                this.x += 1;
-            }
-            this.draw();
-        }   
-    },
-    playerMove: function(e) {
-        switch(e.keyCode){
-            //Left,Right,Up,Down
-            case(37):
-                player.update(37);
-                break;
-            case(39):
-                player.update(39);
-                break;
-            case(38):
-                player.update(38);
-                break;
-            case(40):
-                player.update(40);
-                break;
-            default:
-                break;
-        }
-    },
-    Particle: function(x,y,r,color,dx,dy) {
-        this.x = x;
-        this.y = y;
-        this.radius = r;
-        this.dx = dx;
-        this.dy = dy;
-        this.color = color;
-        this.width = this.radius * 2;
-        this.height = this.radius * 2;
-        this.draw = function(color) {
-            c.beginPath();
-            c.strokeStyle = color;
-            c.arc(this.x,this.y,this.radius, 0, Math.PI * 2, false);
-            c.rect(player.x,player.y,player.size,player.size);
-            c.strokeStyle = color;
-            c.stroke();
-        },
-        this.update = function() {
-            /*
-            if (this.x + this.radius > canvasWidth || this.x - this.radius < 0) {
-                this.dx = -this.dx;
-            }
-            if (this.y + this.radius > canvasHeight || this.y - this.radius < 0) {
-                this.dy = -this.dy;
-            }*/
-            if (this.y > canvasHeight) {
-                let index = app.particles.indexOf(this);
-                app.particles.splice(index,1);
-                const radius = (Math.random() * 5) + 5;
-                let x = Math.random() * (canvasWidth - radius * 2) + radius;
-                //let y = Math.random() * (canvasHeight - radius * 2) + radius;
-                let y = -10;
-                //let dx = Math.random() * 2 + 2;
-                let dx = 0;
-                let dy = Math.random() * 3 + 2;
-                app.particles.push(new app.Particle(x,y, radius, 'black', dy, dy));
-            }
-            for(let i=0;i<app.lasers.length;i++) {
-                let laser = app.lasers[i];
-                if (this.x < laser.originX + 25 &&
-                   this.x + this.width > laser.originX &&
-                   this.y < laser.originY + 25 &&
-                   this.height + this.y > laser.originY) {
-                    let index = app.lasers.indexOf(laser);
-                    app.lasers.splice(index,1);
-                    this.destroyed = true;
-                    let particleIndex = app.particles.indexOf(this);
-                    app.particles.splice(particleIndex,1);
-                }
-            }
-            //this.x += this.dx;
-            this.y += this.dy;
-            this.draw(this.color);
-        },
-        this.collision = function() {
-            let currentPosX = Math.floor(this.x);
+    if (this.x + this.size > canvas.width) {
+        this.x -= 1;
+    } else if ( this.x - this.size < 0 ) {
+        this.x += 1;
+    }
+    this.draw();
+};
+let Enemy = function(x,y,r,dx,dy,color){
+    this.x = x;
+    this.y = y;
+    this.radius = r;
+    this.dx = dx;
+    this.dy = dy;
+    this.color = color;
+    this.width = this.radius * 2;
+    this.height = this.radius * 2;
+};
+Enemy.prototype.addEnemy = function() {
+    const radius = (Math.random() * 5) + 5;
+    let x = Math.random() * (canvas.width - radius * 2) + radius;
+    //let y = Math.random() * (canvas.height - radius * 2) + radius;
+    let y = -10;
+    //let dx = Math.random() * 2 + 2;
+    let dx = 0;
+    let dy = Math.random() * 3 + 2;
+    enemies.push(new Enemy(x,y, radius, 'black', dy, dy));
+};
+Enemy.prototype.draw = function(color) {
+    c.beginPath();
+    c.strokeStyle = color;
+    c.arc(this.x,this.y,this.radius, 0, Math.PI * 2, false);
+    //c.rect(player.x,player.y,player.size,player.size);
+    c.strokeStyle = color;
+    c.stroke();
+};
+Enemy.prototype.update = function() {
+    if (this.y > canvas.height) {
+        let index = enemies.indexOf(this);
+        enemies.splice(index,1);
+        const radius = (Math.random() * 5) + 5;
+        let x = Math.random() * (canvas.width - radius * 2) + radius;
+        //let y = Math.random() * (canvas.height - radius * 2) + radius;
+        let y = -10;
+        //let dx = Math.random() * 2 + 2;
+        let dx = 0;
+        let dy = Math.random() * 3 + 2;
+        enemies.push(new Enemy(x,y, radius, 'black', dy, dy));
+    }
+    
+    for(let i=0;i<lasers.length;i++) {
+        let laser = lasers[i];
+        if (this.x < laser.originX + 25 &&
+           this.x + this.width > laser.originX &&
+           this.y < laser.originY + 25 &&
+           this.height + this.y > laser.originY) {
+            let index = lasers.indexOf(laser);
+            lasers.splice(index,1);
+            this.destroyed = true;
+            let particleIndex = enemies.indexOf(this);
+            enemies.splice(particleIndex,1);
         }
     }
-}
-app.init();
+    //this.x += this.dx;
+    this.y += this.dy;
+    this.draw(this.color);
+};
+let Laser = function(x,y) {
+    this.targetX = x;
+    this.targetY = y;
+    this.height = canvas.height - this.targetY;
+    if(this.targetX < (canvas.width/2)) {
+        this.width = this.targetX;
+        this.originX = Math.floor(25);
+        this.originY = Math.floor(canvas.height - 25);
+    } else {
+        this.width = canvas.width - this.targetX;
+        this.originX = Math.floor(canvas.width - 25);
+        this.originY = Math.floor(canvas.height - 25);
+    }
+    this.magnitude = Math.sqrt(this.width * this.width + this.height * this.height);
+    this.dx = this.width / this.magnitude * 10;
+    this.dy = this.height / this.magnitude * 10;
+};
+Laser.prototype.addLaser = function(e) {
+    let offsetX = canvas.offsetLeft;
+    let offsetY = canvas.offsetTop;
+    let x = e.clientX - offsetX;
+    let y = e.clientY - offsetY;
+    //lasers.push(new Laser(x,y));
+};
+Laser.prototype.update = function() {
+    if(this.targetX < (canvas.width/2)) {
+        this.originX += this.dx;
+    } else {
+        this.originX -= this.dx;
+    }
+    this.originY -= this.dy;
+    this.originX = Math.floor(this.originX);
+    this.originY = Math.floor(this.originY);
+    if(this.originX < 0 || this.originX > canvas.width) {
+        let index = lasers.indexOf(this);
+        lasers.splice(index,1);
+    } else {
+        this.draw();
+    }
+};
+Laser.prototype.draw = function(color){
+    c.beginPath();
+    c.strokeStyle="blue";
+    c.rect(this.originX,this.originY,25,25);
+    c.stroke();
+};
+
+let enemies = [new Enemy(50,-10,10,4,4,'blue'),new Enemy(150,-10,10,4,4,'blue'),new Enemy(250,-10,10,4,4,'blue'),];
+let lasers = [];
+let player = new Player(200,350,50,'black');
+let model = new Model(player, enemies, lasers);
+let view = new View(c);
+let controller = new Controller(model,view);
+controller.init();
+
 })();
