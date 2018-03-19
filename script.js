@@ -105,13 +105,13 @@ Controller.prototype = {
             if(difference > 50 && difference < 200) {
                 console.log('flicked the phone up')
                 this.flicked.innerHTML = 'jumped!';
+                window.setTimeout(this.reset.bind(this),500);
             }
-            window.setTimeout(this.reset.bind(this),500);
         }
-    },
-    reset: function() {
         this.stopMeasuringDown = false;
         this.stopMeasuringUp = false;
+    },
+    reset: function() {
         this.flicked.innerHTML = '';
     },
     checkRotation: function(e) {
