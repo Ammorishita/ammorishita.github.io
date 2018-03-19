@@ -61,8 +61,8 @@ Controller.prototype = {
     init: function() {
         this.view.init();
         this.render();
-        this.stopMeasuringUp = false;
-        this.stopMeasuringDown = false;
+        this.checkingForJump = true;
+        this.fallingDown = false;
         this.canvas = this.view.canvas.canvas;
         window.addEventListener('deviceorientation', this.checkRotation.bind(this), false);
         window.setInterval(this.checkMotion.bind(this),16);
@@ -95,31 +95,39 @@ Controller.prototype = {
         this.model.createLaser(e);
     },
     checkMotion: function() {
+        //Check for upwards movement on the phone
         if(this.oldBeta < this.beta) {
             let dy = this.beta - this.oldBeta;
             this.dy.innerHTML = dy;
-            if(this.stopMeasuringUp === false && dy > 1) {
+            if(this.checkingForJump === true && dy > 7) {
                 this.startDate = new Date();
-                this.stopMeasuringUp = true;
+                this.checkingForJump = false;
+                console.log('fast movement up')
             }
+        //Check for downwards movement on the phone
         } else if (this.oldBeta > this.beta) {
-            if(this.stopMeasuringDown === false) {
+            if(this.fallingDown === false) {
                 this.endDate = new Date();
-                this.stopMeasuringDown = true;                
+                this.fallingDown = true;                
             }
             let difference = (this.endDate.getTime() - this.startDate.getTime());
-            if(difference > 50 && difference < 200) {
+            console.log(difference)
+            if(difference > 50 && difference < 250) {
                 console.log('flicked the phone up')
                 this.flicked.innerHTML = 'jumped!';
                 this.direction = 'jumped';
                 this.model.player.jumping = true;
                 window.setTimeout(this.reset.bind(this),1500);
+                console.log('RESEETINGG')
+            } else {
+                this.fallingDown = false;
+                this.checkingForJump = true;
             }
         }
-        this.stopMeasuringDown = false;
-        this.stopMeasuringUp = false;
     },
     reset: function() {
+        this.fallingDown = false;
+        this.checkingForJump = true;
         this.flicked.innerHTML = '';
         this.model.player.falling = true;
         this.model.player.jumping = false;
