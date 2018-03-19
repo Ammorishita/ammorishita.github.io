@@ -85,11 +85,12 @@ Controller.prototype = {
         this.model.createLaser(e);
     },
     checkMotion: function(e) {
-        console.log(e.acceleration.x)
         this.accelX = e.acceleration.x;
         this.accelY = e.acceleration.y;
         this.accelZ = e.acceleration.z;
+        alert(this.accelX);
         this.alphaEl.innerHTML = this.accelY;
+
         this.betaEl.innerHTML = this.accelY;
         this.gammaEl.innerHTML = this.accelZ;        
     },
