@@ -200,7 +200,7 @@ Player.prototype.afterImage = function() {
         this.xAfter -= 1;
     }
     if(this.yAfter >= this.y) {
-        this.yAfter +=10;
+        this.yAfter +=2;
     }
     if (this.yAfter >= canvas.height) {
         this.yAfter = this.y;
@@ -284,6 +284,19 @@ Player.prototype.update = function() {
         this.drawJumping();
     } else {
         this.draw();
+        this.afterImage();
+        this.afterImage();
+        this.afterImage();
+        this.afterImage();
+        this.afterImage();
+        this.afterImage();
+        this.afterImage();
+        this.afterImage();
+        this.afterImage();
+        this.afterImage();
+        this.afterImage();
+        this.afterImage();
+        this.afterImage();
         this.afterImage();
     }
 };
