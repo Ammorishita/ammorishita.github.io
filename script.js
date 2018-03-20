@@ -113,7 +113,7 @@ Controller.prototype = {
                 this.checkingForJump = false;
                 this.model.player.jumping = true;
                 this.model.player.canJump = false;
-                window.setTimeout(this.descend.bind(this),350);
+                window.setTimeout(this.descend.bind(this),500);
                 window.setTimeout(this.reset.bind(this),700);
             }
         //Check for downwards movement on the phone
@@ -122,13 +122,13 @@ Controller.prototype = {
     },
     descend: function() {
         this.model.player.falling = true;
+        this.model.player.jumping = false;
     },
     reset: function() {
         this.fallingDown = false;
         this.checkingForJump = true;
         this.flicked.innerHTML = '';
         this.model.player.falling = true;
-        this.model.player.jumping = false;
     },
     checkRotation: function(e) {
         this.alpha = e.alpha;
