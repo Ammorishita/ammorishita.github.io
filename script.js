@@ -108,7 +108,6 @@ Controller.prototype = {
         if(this.oldGamma < this.gamma && this.model.player.canJump === true) {
             let dy = this.gamma - this.oldGamma;
             this.dy.innerHTML = dy;
-            console.log(dy);
             if(dy > 5) {
                 //this.startDate = new Date();
                 this.checkingForJump = false;
@@ -149,7 +148,7 @@ canvas.height = window.innerHeight;
 let sprite = new Image();
 sprite.src = 'images/flash-sprite-small.png';
 let posX = window.innerWidth/3;
-let posY = window.innerHeight - 300;
+let posY = window.innerHeight - 228;
 let options = {
     numberOfFrames: 6,
     ticksPerFrame: 2
@@ -213,7 +212,7 @@ Player.prototype.update = function() {
         this.y -= 1;
     } else if(this.jumping === false && this.falling === true) {
         this.y += 1;
-        if(this.y === (canvas.height-this.height)) {
+        if(this.y === (canvas.height-this.spriteHeight)) {
             this.falling = false;
             this.canJump = true;
         }
