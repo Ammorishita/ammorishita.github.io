@@ -12,7 +12,7 @@ html, body {
     display: block;
 }
 .info {
-	color: lime;
+	color: black;
     position: absolute;
     bottom: 0;
 }

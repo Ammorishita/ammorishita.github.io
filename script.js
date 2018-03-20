@@ -94,6 +94,10 @@ Controller.prototype = {
         this.oldBeta = this.beta;
         this.oldGamma = this.gamma;
         this.oldAlpha = this.alpha;
+        let betaEl = document.querySelector('.beta');
+        let gammaEl = document.querySelector('.gamma');
+        betaEl.innerHTML = this.beta;
+        gammaEl.innerHTML = this.gamma;
         this.view.render(this.model.enemies, this.model.lasers, this.model.player);
     },
     weaponInit: function(e) {
@@ -104,7 +108,8 @@ Controller.prototype = {
         if(this.oldBeta < this.beta && this.model.player.canJump === true) {
             let dy = this.beta - this.oldBeta;
             this.dy.innerHTML = dy;
-            if(dy > 7) {
+            console.log(dy);
+            if(dy > 5) {
                 //this.startDate = new Date();
                 this.checkingForJump = false;
                 this.model.player.jumping = true;
