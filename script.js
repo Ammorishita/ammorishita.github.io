@@ -37,7 +37,7 @@ View.prototype = {
     },
     render: function(enemies, lasers, player) {
         this.canvas.clearRect(0,0,this.width, this.height);
-        this.canvas.fillStyle = 'cyan';
+        this.canvas.fillStyle = 'skyblue';
         this.canvas.fillRect(0,0,this.width, this.height);
         enemies.forEach(e => {
             e.update();
@@ -146,22 +146,29 @@ let canvas = document.getElementById('canvas');
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 let sprite = new Image();
+let background = new Image();
 sprite.src = 'images/flash-sprite-small.png';
+background.src = 'images/road-sprite.png';
 let posX = window.innerWidth/3;
 let posY = window.innerHeight - 228;
 let options = {
     numberOfFrames: 6,
-    ticksPerFrame: 2
+    ticksPerFrame: 2,
+    numberOfBackgroundFrames: 2,
+    ticksPerBackgroundFrame: 10
 }
 let c = document.getElementById('canvas').getContext('2d');
 let Player = function(x,y,width,height,color,options) {
     this.x = x;
     this.y = y;
     this.image = sprite;
+    this.background = background;
     this.color = color;
     this.width = width;
     this.spriteWidth = 1000;
+    this.backgroundWidth = 1800;
     this.spriteHeight = 227;
+    this.backgroundHeight = 255;
     this.height = height;
     this.canJump = true;
     this.direction = null;
@@ -169,6 +176,10 @@ let Player = function(x,y,width,height,color,options) {
     this.tickCount = 0;
     this.numberOfFrames = options.numberOfFrames || 1;
     this.ticksPerFrame = options.ticksPerFrame || 0;
+    this.frameIndexBG = 0;
+    this.tickCountBG = 0;
+    this.numberOfBackgroundFrames = options.numberOfBackgroundFrames || 1;
+    this.ticksPerBackgroundFrame = options.ticksPerBackgroundFrame || 0;
     c.rect(x,y,width,height);
     c.stroke();
 };
@@ -183,17 +194,38 @@ Player.prototype.draw = function(argument){
            this.y,
            this.spriteWidth / this.numberOfFrames,
            this.spriteHeight);
-    c.stroke();
-
+};
+Player.prototype.drawBackground = function() {
+    c.drawImage(
+           this.background,
+           this.frameIndexBG * this.backgroundWidth / this.numberOfBackgroundFrames,
+           0,
+           this.backgroundWidth / this.numberOfBackgroundFrames,
+           this.backgroundHeight,
+           0,
+           70,
+           this.backgroundWidth / this.numberOfBackgroundFrames,
+           this.backgroundHeight);
 };
 Player.prototype.update = function() {
     this.tickCount += 1;
+    this.tickCountBG += 1;
+    //Updates through the player sprite
     if(this.tickCount > this.ticksPerFrame) {
         this.tickCount = 0;
         if(this.frameIndex < this.numberOfFrames - 1) {
             this.frameIndex += 1;
         } else if(this.frameIndex = this.numberOfFrames) {
             this.frameIndex = 0;
+        }
+    }
+    //Updates through the background sprite sheet
+    if(this.tickCountBG > this.ticksPerBackgroundFrame) {
+        this.tickCountBG = 0;
+        if(this.frameIndexBG < this.numberOfBackgroundFrames - 1) {
+            this.frameIndexBG += 1;
+        } else if(this.frameIndexBG = this.numberOfBackgroundFrames) {
+            this.frameIndexBG = 0;
         }
     }
     if(this.direction === 'left') {
@@ -217,6 +249,7 @@ Player.prototype.update = function() {
             this.canJump = true;
         }
     }
+    this.drawBackground();
     this.draw();
 };
 let Enemy = function(x,y,r,dx,dy,color){
@@ -327,7 +360,7 @@ Laser.prototype.draw = function(color){
 
 let enemies = [new Enemy(50,-10,10,4,4,'blue'),new Enemy(150,-10,10,4,4,'blue'),new Enemy(250,-10,10,4,4,'blue'),];
 let lasers = [];
-let player = new Player(posX,posY,250,340,'black', options);
+let player = new Player(posX,posY,167,340,'black', options);
 let model = new Model(player, enemies, lasers);
 let view = new View(c);
 let controller = new Controller(model,view);
