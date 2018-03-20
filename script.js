@@ -196,8 +196,12 @@ Player.prototype.draw = function(argument){
            this.spriteHeight);
 };
 Player.prototype.afterImage = function() {
-    if(this.xAfter <= this.x) {
-        this.xAfter -= 1;
+    if(this.direction === 'left') {
+        this.xAfter +=1;
+    } else if(this.direction === 'right') {
+        this.xAfter -=1;
+    } else {
+        this.xAfter += 0;
     }
     if(this.yAfter >= this.y) {
         this.yAfter +=2;
