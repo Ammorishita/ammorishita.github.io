@@ -147,28 +147,31 @@ canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 let sprite = new Image();
 let background = new Image();
+let spriteJumping = new Image();
+spriteJumping.src = 'images/sprite-jump.png';
 sprite.src = 'images/flash-sprite-small.png';
-background.src = 'images/road-sprite.png';
+background.src = 'images/road-sprite-new.png';
 let posX = window.innerWidth/3;
 let posY = window.innerHeight - 228;
 let options = {
     numberOfFrames: 6,
     ticksPerFrame: 2,
     numberOfBackgroundFrames: 2,
-    ticksPerBackgroundFrame: 10
+    ticksPerBackgroundFrame: 5
 }
 let c = document.getElementById('canvas').getContext('2d');
 let Player = function(x,y,width,height,color,options) {
     this.x = x;
     this.y = y;
     this.image = sprite;
+    this.imageJump = spriteJumping;
     this.background = background;
     this.color = color;
     this.width = width;
     this.spriteWidth = 1000;
-    this.backgroundWidth = 1800;
+    this.backgroundWidth = 1480;
     this.spriteHeight = 227;
-    this.backgroundHeight = 255;
+    this.backgroundHeight = canvas.height;
     this.height = height;
     this.canJump = true;
     this.direction = null;
@@ -180,8 +183,6 @@ let Player = function(x,y,width,height,color,options) {
     this.tickCountBG = 0;
     this.numberOfBackgroundFrames = options.numberOfBackgroundFrames || 1;
     this.ticksPerBackgroundFrame = options.ticksPerBackgroundFrame || 0;
-    c.rect(x,y,width,height);
-    c.stroke();
 };
 Player.prototype.draw = function(argument){
     c.drawImage(
@@ -194,6 +195,14 @@ Player.prototype.draw = function(argument){
            this.y,
            this.spriteWidth / this.numberOfFrames,
            this.spriteHeight);
+};
+Player.prototype.drawJumping = function() {
+    c.drawImage(
+           this.imageJump,
+           this.x,
+           this.y,
+           167,
+           340);
 };
 Player.prototype.drawBackground = function() {
     c.drawImage(
@@ -250,7 +259,11 @@ Player.prototype.update = function() {
         }
     }
     this.drawBackground();
-    this.draw();
+    if(this.jumping === true || this.falling === true) {
+        this.drawJumping();
+    } else {
+        this.draw();
+    }
 };
 let Enemy = function(x,y,r,dx,dy,color){
     this.x = x;
