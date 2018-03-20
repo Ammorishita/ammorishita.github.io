@@ -105,8 +105,8 @@ Controller.prototype = {
     },
     checkMotion: function() {
         //Check for upwards movement on the phone
-        if(this.oldBeta < this.beta && this.model.player.canJump === true) {
-            let dy = this.beta - this.oldBeta;
+        if(this.oldGamma < this.gamma && this.model.player.canJump === true) {
+            let dy = this.gamma - this.oldGamma;
             this.dy.innerHTML = dy;
             console.log(dy);
             if(dy > 5) {
