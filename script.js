@@ -96,8 +96,6 @@ Controller.prototype = {
         this.oldAlpha = this.alpha;
         let betaEl = document.querySelector('.beta');
         let gammaEl = document.querySelector('.gamma');
-        betaEl.innerHTML = this.beta;
-        gammaEl.innerHTML = this.gamma;
         this.view.render(this.model.enemies, this.model.lasers, this.model.player);
     },
     weaponInit: function(e) {
@@ -107,7 +105,6 @@ Controller.prototype = {
         //Check for upwards movement on the phone
         if(this.oldGamma < this.gamma && this.model.player.canJump === true) {
             let dy = this.gamma - this.oldGamma;
-            this.dy.innerHTML = dy;
             if(dy > 5) {
                 //this.startDate = new Date();
                 this.checkingForJump = false;
@@ -163,6 +160,8 @@ let c = document.getElementById('canvas').getContext('2d');
 let Player = function(x,y,width,height,color,options) {
     this.x = x;
     this.y = y;
+    this.xAfter = x;
+    this.yAfter = y;
     this.image = sprite;
     this.imageJump = spriteJumping;
     this.background = background;
@@ -193,6 +192,28 @@ Player.prototype.draw = function(argument){
            this.spriteHeight,
            this.x,
            this.y,
+           this.spriteWidth / this.numberOfFrames,
+           this.spriteHeight);
+};
+Player.prototype.afterImage = function() {
+    if(this.xAfter <= this.x) {
+        this.xAfter -= 1;
+    }
+    if(this.yAfter >= this.y) {
+        this.yAfter +=10;
+    }
+    if (this.yAfter >= canvas.height) {
+        this.yAfter = this.y;
+        this.xAfter = this.x;
+    }
+    c.drawImage(
+           this.image,
+           this.frameIndex * this.spriteWidth / this.numberOfFrames,
+           0,
+           this.spriteWidth / this.numberOfFrames,
+           this.spriteHeight,
+           this.xAfter,
+           this.yAfter,
            this.spriteWidth / this.numberOfFrames,
            this.spriteHeight);
 };
@@ -263,6 +284,7 @@ Player.prototype.update = function() {
         this.drawJumping();
     } else {
         this.draw();
+        this.afterImage();
     }
 };
 let Enemy = function(x,y,r,dx,dy,color){
