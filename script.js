@@ -146,24 +146,57 @@ Controller.prototype = {
 let canvas = document.getElementById('canvas');
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
-let posX = window.innerWidth/2;
-let posY = window.innerHeight - 50;
+let sprite = new Image();
+sprite.src = 'images/flash-sprite.png';
+let posX = window.innerWidth/3;
+let posY = window.innerHeight - 300;
+let options = {
+    numberOfFrames: 6,
+    ticksPerFrame: 2
+}
 let c = document.getElementById('canvas').getContext('2d');
-let Player = function(x,y,size,color) {
+let Player = function(x,y,width,height,color,options) {
     this.x = x;
     this.y = y;
+    this.image = sprite;
     this.color = color;
-    this.size = size;
+    this.width = width;
+    this.spriteWidth = 1500;
+    this.spriteHeight = 340;
+    this.height = height;
     this.canJump = true;
     this.direction = null;
-    c.rect(x,y,size,size);
+    this.frameIndex = 0;
+    this.tickCount = 0;
+    this.numberOfFrames = options.numberOfFrames || 1;
+    this.ticksPerFrame = options.ticksPerFrame || 0;
+    c.rect(x,y,width,height);
     c.stroke();
 };
 Player.prototype.draw = function(argument){
-    c.rect(this.x,this.y,this.size,this.size);
-    c.stroke();     
+    c.drawImage(
+           this.image,
+           this.frameIndex * this.spriteWidth / this.numberOfFrames,
+           0,
+           this.spriteWidth / this.numberOfFrames,
+           this.spriteHeight,
+           this.x,
+           this.y,
+           this.spriteWidth / this.numberOfFrames,
+           this.spriteHeight);
+    c.stroke();
+
 };
 Player.prototype.update = function() {
+    this.tickCount += 1;
+    if(this.tickCount > this.ticksPerFrame) {
+        this.tickCount = 0;
+        if(this.frameIndex < this.numberOfFrames - 1) {
+            this.frameIndex += 1;
+        } else if(this.frameIndex = this.numberOfFrames) {
+            this.frameIndex = 0;
+        }
+    }
     if(this.direction === 'left') {
         this.x -= 2;
     } else if (this.direction === 'right') {
@@ -171,18 +204,16 @@ Player.prototype.update = function() {
     } else if (this.direction === 'straight') {
         this.x += 0;
     }
-    if (this.x + this.size > canvas.width) {
+    if (this.x + this.width > canvas.width) {
         this.x -= 2;
     } else if ( this.x < 0 ) {
         this.x += 2;
     }
     if(this.jumping === true) {
-        this.size += .4;
         this.y -= 1;
     } else if(this.jumping === false && this.falling === true) {
-        this.size -= .4;
         this.y += 1;
-        if(this.y === (canvas.height-50)) {
+        if(this.y === (canvas.height-this.height)) {
             this.falling = false;
             this.canJump = true;
         }
@@ -297,7 +328,7 @@ Laser.prototype.draw = function(color){
 
 let enemies = [new Enemy(50,-10,10,4,4,'blue'),new Enemy(150,-10,10,4,4,'blue'),new Enemy(250,-10,10,4,4,'blue'),];
 let lasers = [];
-let player = new Player(posX,posY,50,'black');
+let player = new Player(posX,posY,250,340,'black', options);
 let model = new Model(player, enemies, lasers);
 let view = new View(c);
 let controller = new Controller(model,view);
