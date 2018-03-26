@@ -5,21 +5,22 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
 </head>
 <body>
-<canvas id="canvas">
-</canvas>
-<section>
-	<div class="info">
-		<h2>Device Rotation</h2>
-		<li>Alpha</li><li class="alpha"></li>
-		<li>Beta</li><li class="beta"></li>
-		<li>Gamma</li><li class="gamma"></li>
-		<li>DY</li><span class="dy"></span>
-		<li>Jumped?</li><li class="flicked"></span>
-	</div>
-</section>
-</div>
+	<main>
+		<section class="menu disabled">
+			<h2>Game must be played in landscape mode</h2>
+		</section>
+		<canvas id="canvas">
+		</canvas>
+		<section>
+			<div class="info">
+				<li>Speed(MPH): <span class="speed--info">500</span></li>
+			</div>
+		</section>
+		
+	</main>
 
 <script src="script.js"></script>
 </body>

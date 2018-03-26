@@ -15,6 +15,7 @@ Model.prototype.createLaser = function(e) {
     let offsetX = canvas.offsetLeft;
     let offsetY = canvas.offsetTop;
     let x = e.clientX - offsetX;
+
     let y = e.clientY - offsetY;
     this.addLaser(x,y);
 };
@@ -39,13 +40,13 @@ View.prototype = {
         this.canvas.clearRect(0,0,this.width, this.height);
         this.canvas.fillStyle = 'skyblue';
         this.canvas.fillRect(0,0,this.width, this.height);
-        enemies.forEach(e => {
-            e.update();
-        });
         lasers.forEach(e => {
             e.update();
         });
         player.update();
+        enemies.forEach(e => {
+            e.update();
+        });
     }
 };
 
@@ -79,7 +80,7 @@ Controller.prototype = {
         this.canvas.height = window.innerHeight;
     },
     render: function() {
-        //console.log(this.model.player.direction);
+        //Checks the phone orientation
         window.requestAnimationFrame(this.render.bind(this));
         if(this.beta <= -5 && this.beta >= -20) {
             this.model.player.direction = 'left';
@@ -94,8 +95,8 @@ Controller.prototype = {
         this.oldBeta = this.beta;
         this.oldGamma = this.gamma;
         this.oldAlpha = this.alpha;
-        let betaEl = document.querySelector('.beta');
-        let gammaEl = document.querySelector('.gamma');
+        let speedEl = document.querySelector('.speed--info');
+        speedEl.innerHTML = this.model.player.speed;
         this.view.render(this.model.enemies, this.model.lasers, this.model.player);
     },
     weaponInit: function(e) {
@@ -124,7 +125,6 @@ Controller.prototype = {
     reset: function() {
         this.fallingDown = false;
         this.checkingForJump = true;
-        this.flicked.innerHTML = '';
         this.model.player.falling = true;
     },
     checkRotation: function(e) {
@@ -145,38 +145,50 @@ canvas.height = window.innerHeight;
 let sprite = new Image();
 let background = new Image();
 let spriteJumping = new Image();
+let powerItem = new Image();
+powerItem.src = 'images/power2.png';
+let negativePower = new Image();
+negativePower.src = 'images/negativePower.png';
 spriteJumping.src = 'images/sprite-jump.png';
-sprite.src = 'images/flash-sprite-small.png';
-background.src = 'images/road-sprite-new.png';
+sprite.src = 'images/flash-sprite-final2.png';
+background.src = 'images/road.png';
+let colors = ['red','lime','dodgerblue','cyan'];
 let posX = window.innerWidth/3;
-let posY = window.innerHeight - 228;
+let posY = window.innerHeight - 170;
 let options = {
     numberOfFrames: 6,
+    numberOfRows: 5,
     ticksPerFrame: 2,
-    numberOfBackgroundFrames: 2,
+    numberOfBackgroundFrames: 1,
     ticksPerBackgroundFrame: 5
 }
 let c = document.getElementById('canvas').getContext('2d');
+
 let Player = function(x,y,width,height,color,options) {
     this.x = x;
     this.y = y;
     this.xAfter = x;
     this.yAfter = y;
     this.image = sprite;
+    this.speed = 200;
+    this.afterImageActive = true;
     this.imageJump = spriteJumping;
     this.background = background;
     this.color = color;
     this.width = width;
-    this.spriteWidth = 1000;
-    this.backgroundWidth = 1480;
-    this.spriteHeight = 227;
+    this.spriteWidth = 750;
+    this.xSize = width;
+    this.direction = 'straight';
+    this.backgroundWidth = 900;
+    this.spriteHeight = 170;
     this.backgroundHeight = canvas.height;
     this.height = height;
     this.canJump = true;
-    this.direction = null;
     this.frameIndex = 0;
+    this.rowIndex = 0;
     this.tickCount = 0;
     this.numberOfFrames = options.numberOfFrames || 1;
+    this.numberOfRows = options.numberOfRows || 1;
     this.ticksPerFrame = options.ticksPerFrame || 0;
     this.frameIndexBG = 0;
     this.tickCountBG = 0;
@@ -187,7 +199,7 @@ Player.prototype.draw = function(argument){
     c.drawImage(
            this.image,
            this.frameIndex * this.spriteWidth / this.numberOfFrames,
-           0,
+           this.rowIndex * this.spriteHeight,
            this.spriteWidth / this.numberOfFrames,
            this.spriteHeight,
            this.x,
@@ -197,11 +209,19 @@ Player.prototype.draw = function(argument){
 };
 Player.prototype.afterImage = function() {
     if(this.direction === 'left') {
-        this.xAfter +=1;
+        this.xSize += 1;
     } else if(this.direction === 'right') {
-        this.xAfter -=1;
-    } else {
-        this.xAfter += 0;
+        this.xSize += 2;
+        this.xAfter -= 1;
+    } else if(this.direction === 'straight') {
+        this.xAfter -= 1;
+        this.xSize += 2;
+    }
+    if(this.direction === 'left' && this.x < 5) {
+        this.xAfter -=3;
+    }
+    if(this.direction === 'right' && this.x > (canvas.width - this.width - 5)) {
+        this.xAfter +=3;
     }
     if(this.yAfter >= this.y) {
         this.yAfter +=2;
@@ -209,25 +229,41 @@ Player.prototype.afterImage = function() {
     if (this.yAfter >= canvas.height) {
         this.yAfter = this.y;
         this.xAfter = this.x;
+        this.xSize = this.width;
     }
-    c.drawImage(
-           this.image,
-           this.frameIndex * this.spriteWidth / this.numberOfFrames,
+    //Draw the jump sprite afterimage while jumping
+    if(this.jumping === true || this.falling === true) {
+        c.drawImage(
+           this.imageJump,
+           0,
            0,
            this.spriteWidth / this.numberOfFrames,
            this.spriteHeight,
            this.xAfter,
            this.yAfter,
-           this.spriteWidth / this.numberOfFrames,
+           this.xSize,
            this.spriteHeight);
+    } else {
+        //Draw the normal sprite afterimage if not jumping
+        c.drawImage(
+               this.image,
+               this.frameIndex * this.spriteWidth / this.numberOfFrames,
+               0,
+               this.spriteWidth / this.numberOfFrames,
+               this.spriteHeight,
+               this.xAfter,
+               this.yAfter,
+               this.xSize,
+               this.spriteHeight);
+    }
 };
 Player.prototype.drawJumping = function() {
     c.drawImage(
            this.imageJump,
            this.x,
            this.y,
-           167,
-           340);
+           125,
+           170);
 };
 Player.prototype.drawBackground = function() {
     c.drawImage(
@@ -253,6 +289,33 @@ Player.prototype.update = function() {
             this.frameIndex = 0;
         }
     }
+    /*
+    if(this.speed > 300 && this.speed <= 500) {
+        this.rowIndex = 1;
+    } else if(this.speed > 500) {
+        this.rowIndex = 2;
+    } else if(this.speed < 200) {
+        this.rowIndex = 0;
+    } else if(this.direction === 'left') {
+        this.rowIndex = 3;
+    } else if(this.direction === 'right') {
+        this.rowIndex = 4;
+    }*/
+    if(this.direction === 'straight') {
+        this.rowIndex = 0;
+        if(this.speed > 300 && this.speed <= 350) {
+            this.rowIndex = 1;
+        } else if (this.speed > 350) {
+            this.rowIndex = 2;
+        }
+    } else if(this.direction === 'right') {
+        this.rowIndex = 4;
+
+    } else if(this.direction === 'left') {
+        this.rowIndex = 3;
+    }
+    if(this.direction === 'left' && this.x < 5) {this.rowIndex = 4;}
+    if(this.direction === 'right' && this.x > (canvas.width - this.width - 5)) {this.rowIndex = 3;}
     //Updates through the background sprite sheet
     if(this.tickCountBG > this.ticksPerBackgroundFrame) {
         this.tickCountBG = 0;
@@ -262,6 +325,7 @@ Player.prototype.update = function() {
             this.frameIndexBG = 0;
         }
     }
+    //Move the flash in a direction depending on the phone tilt
     if(this.direction === 'left') {
         this.x -= 2;
     } else if (this.direction === 'right') {
@@ -269,11 +333,13 @@ Player.prototype.update = function() {
     } else if (this.direction === 'straight') {
         this.x += 0;
     }
+    //Prevents the player from running too far right and left
     if (this.x + this.width > canvas.width) {
         this.x -= 2;
     } else if ( this.x < 0 ) {
         this.x += 2;
     }
+    //Detect for fast upwards movement to start jump animation
     if(this.jumping === true) {
         this.y -= 1;
     } else if(this.jumping === false && this.falling === true) {
@@ -284,85 +350,138 @@ Player.prototype.update = function() {
         }
     }
     this.drawBackground();
+
+    //Draw the after images while jumping or running.
     if(this.jumping === true || this.falling === true) {
         this.drawJumping();
+        if(this.afterImageActive === true) {
+            for(let i=0;i<10;i++) {
+                this.afterImage();
+            }
+        }
     } else {
         this.draw();
-        this.afterImage();
-        this.afterImage();
-        this.afterImage();
-        this.afterImage();
-        this.afterImage();
-        this.afterImage();
-        this.afterImage();
-        this.afterImage();
-        this.afterImage();
-        this.afterImage();
-        this.afterImage();
-        this.afterImage();
-        this.afterImage();
-        this.afterImage();
+        if(this.afterImageActive === true) {
+            for(let i=0;i<10;i++) {
+                this.afterImage();
+            }
+        }
     }
 };
-let Enemy = function(x,y,r,dx,dy,color){
+let Enemy = function(x,y,r,dx,dy,color,image,width){
+    let itemSrc = new Image();
+    if(color === 'blue') {
+        itemSrc.src = 'images/negativePower.png';
+    } else {
+        itemSrc.src = 'images/power2.png';
+    }
     this.x = x;
     this.y = y;
+    this.image = itemSrc;
     this.radius = r;
     this.dx = dx;
     this.dy = dy;
+    this.item = true;
     this.color = color;
-    this.width = this.radius * 2;
-    this.height = this.radius * 2;
+    this.width = width;
+    this.height = width;
 };
 Enemy.prototype.addEnemy = function() {
     const radius = (Math.random() * 5) + 5;
-    let x = Math.random() * (canvas.width - radius * 2) + radius;
+    radius > 7.5 ? this.item = false : this.item = true;
+    let color;
+    let image ='images/power.png';
+    color = radius > 7.5 ? 'red' : 'blue';
+    if(color === 'blue') {
+        image = 'images/negativePower.png';
+    }
+    let x = Math.floor(Math.random() * ((canvas.width/2 + 50) - (canvas.width/2 - 50)) + (canvas.width/2 - 50));
     //let y = Math.random() * (canvas.height - radius * 2) + radius;
-    let y = -10;
+    let y = 50;
     //let dx = Math.random() * 2 + 2;
     let dx = 0;
     let dy = Math.random() * 3 + 2;
-    enemies.push(new Enemy(x,y, radius, 'black', dy, dy));
+    enemies.push(new Enemy(x,y,radius,dx,dy,color,image,5));
 };
 Enemy.prototype.draw = function(color) {
     c.beginPath();
-    c.strokeStyle = color;
+    // c.strokeStyle = this.color;
     c.arc(this.x,this.y,this.radius, 0, Math.PI * 2, false);
     //c.rect(player.x,player.y,player.size,player.size);
-    c.strokeStyle = color;
-    c.stroke();
+    // c.stroke();
+    c.drawImage(
+       this.image,
+       0,
+       0,
+       40,
+       40,
+       this.x,
+       this.y,
+       this.width,
+       this.height
+    );
 };
 Enemy.prototype.update = function() {
     if (this.y > canvas.height) {
         let index = enemies.indexOf(this);
+        let color;
         enemies.splice(index,1);
         const radius = (Math.random() * 5) + 5;
-        let x = Math.random() * (canvas.width - radius * 2) + radius;
+        let x = Math.floor(Math.random() * ((canvas.width/2 + 50) - (canvas.width/2 - 50)) + (canvas.width/2 - 50));
         //let y = Math.random() * (canvas.height - radius * 2) + radius;
-        let y = -10;
+        let y = 50;
+        color = radius > 7.5 ? 'red' : 'blue';
         //let dx = Math.random() * 2 + 2;
-        let dx = 0;
-        let dy = Math.random() * 3 + 2;
-        enemies.push(new Enemy(x,y, radius, 'black', dy, dy));
+        let dx = Math.random() < 0.5 ? -.2 : .2;
+        let dy = 1;
+        let width = 5;
+        let image = 'images/power.png';
+        enemies.push(new Enemy(x,y,radius,dx,dy,color,image,width));
     }
-    
-    for(let i=0;i<lasers.length;i++) {
-        let laser = lasers[i];
-        if (this.x < laser.originX + 25 &&
-           this.x + this.width > laser.originX &&
-           this.y < laser.originY + 25 &&
-           this.height + this.y > laser.originY) {
-            let index = lasers.indexOf(laser);
-            lasers.splice(index,1);
-            this.destroyed = true;
-            let particleIndex = enemies.indexOf(this);
-            enemies.splice(particleIndex,1);
+    this.randomNum = function(min,max) {
+        return Math.floor(Math.random() * (max - min + 1) + min);
+    }
+    this.itemSpeed = Math.pow(this.y, 1.5)/this.randomNum(1400,2000);
+
+    //Basic collisions detection
+    for(let i=0;i<enemies.length;i++) {
+        let enemy = enemies[i];
+        if (enemy.x < player.x + 72 &&
+            enemy.x + enemy.width > player.x &&
+            enemy.y < player.y + 85 &&
+            enemy.height + enemy.y > player.y) {
+            let index = enemies.indexOf(enemy);
+            enemies.splice(index,1);
+            enemy.destroyed = true;
+            if(enemy.color === 'red') {
+                player.speed += 10;
+            } else if(enemy.color === 'blue') {
+                player.speed -= 20;
+            }
+            this.addEnemy();
         }
     }
-    //this.x += this.dx;
-    this.y += this.dy;
+    if(player.direction === 'left') {
+        this.x += .5;
+        //this.y += this.dy;
+        this.y += this.itemSpeed;
+        //this.x = 200;
+    } else if(player.direction === 'right') {
+        this.x -= .5;
+        //this.y += this.dy;
+        this.y += this.itemSpeed;
+        //this.x = 200;
+    } else if(player.direction === 'straight') {
+        this.x += this.dx;
+        //this.y += this.dy;
+        this.y += this.itemSpeed;
+        //this.x = 200;
+    }
+    this.width += .1;
+    this.height += .1;
     this.draw(this.color);
 };
+/*
 let Laser = function(x,y) {
     this.targetX = x;
     this.targetY = y;
@@ -409,10 +528,24 @@ Laser.prototype.draw = function(color){
     c.rect(this.originX,this.originY,25,25);
     c.stroke();
 };
-
-let enemies = [new Enemy(50,-10,10,4,4,'blue'),new Enemy(150,-10,10,4,4,'blue'),new Enemy(250,-10,10,4,4,'blue'),];
+*/
+let enemies = [];
+for(let i=0;i<3;i++) {
+    let enemyX = Math.floor(Math.random() * ((canvas.width/2 + 50) - (canvas.width/2 - 50)) + (canvas.width/2 - 50));
+    let enemyDx = Math.random() < 0.5 ? -.2 : .2;
+    let enemyDy = 1;
+    const radius = (Math.random() * 5) + 5;
+    let color;
+    let width = 5;
+    let image = 'images/power.png';
+    color = radius > 7.5 ? 'red' : 'blue';
+    if(color === 'blue') {
+        image = 'images/negativePower.png';
+    }
+    enemies.push(new Enemy(enemyX,50,radius,enemyDx,enemyDy,color,image,width));
+}
 let lasers = [];
-let player = new Player(posX,posY,167,340,'black', options);
+let player = new Player(posX,posY,125,170,'black', options);
 let model = new Model(player, enemies, lasers);
 let view = new View(c);
 let controller = new Controller(model,view);

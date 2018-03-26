@@ -12,11 +12,43 @@ html, body {
     display: block;
 }
 .info {
-	color: black;
+    color: black;
     position: absolute;
-    bottom: 0;
+    top: 20px;
+    left: 5%;
 }
 .info li {
-	display: inline-block;
-	width: 50%;
+    display: inline-block;
+    width: 50%;
+}
+.menu {
+    width: 100vw;
+    height: 100vh;
+    position: absolute;
+    z-index: 10;
+    background-color: #222;
+    color: cyan;
+    font-family: 'Roboto';
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.menu.disabled {
+    display: none;
+}
+.menu h2 {
+    display: none;
+}
+.speed--info {
+    display: inline-block;
+    color: red;
+    font-weight: bold;
+    font-size: 20px;
+}
+@media screen and (orientation:portrait) {
+    .menu h2 {
+        margin: auto;
+        text-align: center;
+        display: block;
+    }
 }
