@@ -190,7 +190,7 @@ let negativePower = new Image();
 negativePower.src = 'images/negativePower.png';
 spriteJumping.src = 'images/sprite-jump.png';
 sprite.src = 'images/flash-sprite-final2.png';
-background.src = 'images/road-sprite-2.png';
+background.src = 'images/road.png';
 let colors = ['red','lime','dodgerblue','cyan'];
 
 let options = {
