@@ -7,9 +7,24 @@ html, body {
     padding: 0;
     margin: 0;
     background: #222;
+    overflow: hidden;
 }
 #canvas {
+    max-width: 650px;
+    min-width: 550px;
+    border: 2px solid purple;
+    margin: 0 auto;
     display: block;
+    height: 100%;
+}
+/* ====== Backgrounds === */
+
+.bg--canvasContainer {
+    width: 100vw;
+    height: 100vh;
+    border: 3px solid red;
+    overflow: hidden;
+    position: relative;
 }
 .info {
     color: black;
@@ -19,7 +34,6 @@ html, body {
 }
 .info li {
     display: inline-block;
-    width: 50%;
 }
 .menu {
     width: 100vw;
@@ -39,12 +53,39 @@ html, body {
 .menu h2 {
     display: none;
 }
+.menu--alt {
+    width: 100px;
+    height: 100vh;
+    top: 0;
+    position: absolute;
+    z-index: 50;
+    transition: all .5s;
+}
+.menu--left {
+    background-color: pink;
+    left: -100px;
+}
+.menu--right {
+    background-color: dodgerblue;
+    right: -100px;
+}
+.menu--left.active {
+    left: 0;
+}
+.menu--right.active {
+    right: 0;
+}
 .speed--info {
     display: inline-block;
     color: red;
     font-weight: bold;
     font-size: 20px;
 }
+.user--interface {
+
+}
+
+
 @media screen and (orientation:portrait) {
     .menu h2 {
         margin: auto;

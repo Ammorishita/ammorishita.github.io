@@ -20,21 +20,57 @@ Model.prototype.createLaser = function(e) {
     this.addLaser(x,y);
 };
 Model.prototype.addLaser = function(x,y) {
-    this.lasers.push(new Laser(x,y));
+   // this.lasers.push(new Laser(x,y));
 };
 
 /*=========================================
 THE VIEW : Draws all elements on the page
 ======================================== */
 
-function View(canvas) {
+function View(canvas, model) {
     this.canvas = canvas;
     this.width = window.innerWidth;
     this.height = window.innerHeight;
+    console.log(this.width, this.height);
+    this.leftMenu = document.querySelector('.menu--left');
+    this.rightMenu = document.querySelector('.menu--right');
 };
 View.prototype = {
     init: function() {
         this.canvasElement = this.canvas.canvas;
+        this.canvasElement.addEventListener('touchstart', this.beginTouchEvent.bind(this), false);
+        this.canvasElement.addEventListener('touchmove', this.touchEvent.bind(this), false);
+        this.canvasElement.addEventListener('touchend', this.endTouchEvent.bind(this), false);
+    },
+    beginTouchEvent: function(event) {
+        this.touchstartx = event.touches[0].pageX;
+        this.timestart = new Date().getTime();
+    },
+    touchEvent: function(event) {
+        this.touchmovex = event.touches[0].pageX;    
+    },
+    endTouchEvent: function(event) {
+        let moveDistance = this.touchstartx - this.touchmovex;
+        console.log(moveDistance)
+        if(moveDistance < 0) {
+            this.swipeDirection = 'right';
+        } else if (moveDistance > 0) {
+            this.swipeDirection = 'left';
+        }
+        this.timeEnd = new Date().getTime();
+        this.swipeTime = this.timeEnd - this.timestart;
+
+        if(this.swipeTime < 500) {
+            if(this.touchstartx < 100 && this.swipeDirection === 'right') {
+                this.leftMenu.classList.add('active');
+            } else if(this.touchstartx < 250 && this.swipeDirection === 'left') {
+                this.leftMenu.classList.remove('active');
+            } else if(this.touchstartx > (this.width - 100) && this.swipeDirection === 'left') {
+                this.rightMenu.classList.add('active');
+            } else if(this.touchstartx > (this.width - 250) && this.swipeDirection === 'right') {
+                this.rightMenu.classList.remove('active');
+            }
+        }
     },
     render: function(enemies, lasers, player) {
         this.canvas.clearRect(0,0,this.width, this.height);
@@ -47,6 +83,8 @@ View.prototype = {
         enemies.forEach(e => {
             e.update();
         });
+    },
+    showLeftMenu: function(e) {
     }
 };
 
@@ -96,7 +134,7 @@ Controller.prototype = {
         this.oldGamma = this.gamma;
         this.oldAlpha = this.alpha;
         let speedEl = document.querySelector('.speed--info');
-        speedEl.innerHTML = this.model.player.speed;
+        speedEl.innerHTML = this.model.player.speed + ' : Phase Level ' + player.phaseLevel;
         this.view.render(this.model.enemies, this.model.lasers, this.model.player);
     },
     weaponInit: function(e) {
@@ -140,8 +178,9 @@ Controller.prototype = {
 =====================================*/
 
 let canvas = document.getElementById('canvas');
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+canvas.width = canvas.clientWidth;
+console.log(canvas.offsetWidth, canvas.offsetHeight, window.innerWidth,  window.innerHeight)
+canvas.height = canvas.clientHeight;
 let sprite = new Image();
 let background = new Image();
 let spriteJumping = new Image();
@@ -151,16 +190,15 @@ let negativePower = new Image();
 negativePower.src = 'images/negativePower.png';
 spriteJumping.src = 'images/sprite-jump.png';
 sprite.src = 'images/flash-sprite-final2.png';
-background.src = 'images/road.png';
+background.src = 'images/road-sprite-2.png';
 let colors = ['red','lime','dodgerblue','cyan'];
-let posX = window.innerWidth/3;
-let posY = window.innerHeight - 170;
+
 let options = {
     numberOfFrames: 6,
     numberOfRows: 5,
     ticksPerFrame: 2,
     numberOfBackgroundFrames: 1,
-    ticksPerBackgroundFrame: 5
+    ticksPerBackgroundFrame: 3
 }
 let c = document.getElementById('canvas').getContext('2d');
 
@@ -179,7 +217,7 @@ let Player = function(x,y,width,height,color,options) {
     this.spriteWidth = 750;
     this.xSize = width;
     this.direction = 'straight';
-    this.backgroundWidth = 900;
+    this.backgroundWidth = 2700;
     this.spriteHeight = 170;
     this.backgroundHeight = canvas.height;
     this.height = height;
@@ -187,6 +225,7 @@ let Player = function(x,y,width,height,color,options) {
     this.frameIndex = 0;
     this.rowIndex = 0;
     this.tickCount = 0;
+    this.phaseLevel = 1;
     this.numberOfFrames = options.numberOfFrames || 1;
     this.numberOfRows = options.numberOfRows || 1;
     this.ticksPerFrame = options.ticksPerFrame || 0;
@@ -217,12 +256,15 @@ Player.prototype.afterImage = function() {
         this.xAfter -= 1;
         this.xSize += 2;
     }
+    /*
     if(this.direction === 'left' && this.x < 5) {
         this.xAfter -=3;
+
     }
     if(this.direction === 'right' && this.x > (canvas.width - this.width - 5)) {
         this.xAfter +=3;
-    }
+
+    }*/
     if(this.yAfter >= this.y) {
         this.yAfter +=2;
     }
@@ -305,8 +347,10 @@ Player.prototype.update = function() {
         this.rowIndex = 0;
         if(this.speed > 300 && this.speed <= 350) {
             this.rowIndex = 1;
+            this.phaseLevel = 2;
         } else if (this.speed > 350) {
             this.rowIndex = 2;
+            this.phaseLevel = 3;
         }
     } else if(this.direction === 'right') {
         this.rowIndex = 4;
@@ -314,8 +358,8 @@ Player.prototype.update = function() {
     } else if(this.direction === 'left') {
         this.rowIndex = 3;
     }
-    if(this.direction === 'left' && this.x < 5) {this.rowIndex = 4;}
-    if(this.direction === 'right' && this.x > (canvas.width - this.width - 5)) {this.rowIndex = 3;}
+    //if(this.direction === 'left' && this.x < 5) {this.rowIndex = 4;}
+    //if(this.direction === 'right' && this.x > (canvas.width - this.width - 5)) {this.rowIndex = 3;}
     //Updates through the background sprite sheet
     if(this.tickCountBG > this.ticksPerBackgroundFrame) {
         this.tickCountBG = 0;
@@ -355,7 +399,7 @@ Player.prototype.update = function() {
     if(this.jumping === true || this.falling === true) {
         this.drawJumping();
         if(this.afterImageActive === true) {
-            for(let i=0;i<10;i++) {
+            for(let i=0;i<5;i++) {
                 this.afterImage();
             }
         }
@@ -395,7 +439,7 @@ Enemy.prototype.addEnemy = function() {
     if(color === 'blue') {
         image = 'images/negativePower.png';
     }
-    let x = Math.floor(Math.random() * ((canvas.width/2 + 50) - (canvas.width/2 - 50)) + (canvas.width/2 - 50));
+    let x = Math.floor(Math.random() * ((canvas.width/2)))
     //let y = Math.random() * (canvas.height - radius * 2) + radius;
     let y = 50;
     //let dx = Math.random() * 2 + 2;
@@ -544,10 +588,12 @@ for(let i=0;i<3;i++) {
     }
     enemies.push(new Enemy(enemyX,50,radius,enemyDx,enemyDy,color,image,width));
 }
+let posX = canvas.offsetWidth/3;
+let posY = canvas.offsetHeight - 170;
 let lasers = [];
 let player = new Player(posX,posY,125,170,'black', options);
 let model = new Model(player, enemies, lasers);
-let view = new View(c);
+let view = new View(c, model);
 let controller = new Controller(model,view);
 controller.init();
 
