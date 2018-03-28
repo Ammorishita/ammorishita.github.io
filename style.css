@@ -12,7 +12,6 @@ html, body {
 #canvas {
     max-width: 650px;
     min-width: 550px;
-    border: 2px solid purple;
     margin: 0 auto;
     display: block;
     height: 100%;
@@ -22,10 +21,12 @@ html, body {
 .bg--canvasContainer {
     width: 100vw;
     height: 100vh;
-    border: 3px solid red;
     overflow: hidden;
     position: relative;
 }
+
+/* ======= Heads Up Display ==
+=========================== */
 .info {
     color: black;
     position: absolute;
@@ -35,6 +36,14 @@ html, body {
 .info li {
     display: inline-block;
 }
+.speed-meter {
+    width: 100px;
+    background: red;
+    transition: .5s width;
+    height: 15px;
+}
+/* ====== Main Menu ========
+=========================== */
 .menu {
     width: 100vw;
     height: 100vh;
@@ -53,20 +62,42 @@ html, body {
 .menu h2 {
     display: none;
 }
+/* ===== Side Menus ======
+=========================== */
 .menu--alt {
     width: 100px;
     height: 100vh;
     top: 0;
     position: absolute;
     z-index: 50;
+    display: flex;
+    justify-content: space-around;
+    flex-flow: column;
     transition: all .5s;
 }
+.menu--alt li {
+    list-style-type: none;
+}
+.menu--item {
+    position: relative;
+    left: 0px;
+    width: 200px;
+    transition: all .3s;
+}
+.menu--item-left {
+    left: -150px;
+}
+.menu--item-right.active {
+    left: -50px;
+}
+.menu--item-left.active {
+    left: -50px;
+}
 .menu--left {
-    background-color: pink;
     left: -100px;
 }
 .menu--right {
-    background-color: dodgerblue;
+    opacity: .6;
     right: -100px;
 }
 .menu--left.active {

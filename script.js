@@ -11,17 +11,19 @@ function Model(player, enemies, lasers) {
     this.enemies = enemies;
     this.lasers = lasers;
 };
-Model.prototype.createLaser = function(e) {
-    let offsetX = canvas.offsetLeft;
-    let offsetY = canvas.offsetTop;
-    let x = e.clientX - offsetX;
+Model.prototype = {
+    createLaser: function(e) {
+        let offsetX = canvas.offsetLeft;
+        let offsetY = canvas.offsetTop;
+        let x = e.clientX - offsetX;
+        let y = e.clientY - offsetY;
+        this.addLaser(x,y);
+    },
+    addLaser: function(x,y) {
+       // this.lasers.push(new Laser(x,y));
+    }
 
-    let y = e.clientY - offsetY;
-    this.addLaser(x,y);
-};
-Model.prototype.addLaser = function(x,y) {
-   // this.lasers.push(new Laser(x,y));
-};
+}
 
 /*=========================================
 THE VIEW : Draws all elements on the page
@@ -31,9 +33,11 @@ function View(canvas, model) {
     this.canvas = canvas;
     this.width = window.innerWidth;
     this.height = window.innerHeight;
-    console.log(this.width, this.height);
     this.leftMenu = document.querySelector('.menu--left');
     this.rightMenu = document.querySelector('.menu--right');
+    this.rightMenuItems = document.querySelectorAll('.menu--item-right');
+    this.leftMenuItems = document.querySelectorAll('.menu--item-left');
+    this.speedMeter = document.querySelector('.speed-meter');
 };
 View.prototype = {
     init: function() {
@@ -46,12 +50,14 @@ View.prototype = {
         this.touchstartx = event.touches[0].pageX;
         this.timestart = new Date().getTime();
     },
+    speedMeterValue: function(value) {
+        this.speedMeter.style.width = value + 'px';
+    },
     touchEvent: function(event) {
         this.touchmovex = event.touches[0].pageX;    
     },
     endTouchEvent: function(event) {
         let moveDistance = this.touchstartx - this.touchmovex;
-        console.log(moveDistance)
         if(moveDistance < 0) {
             this.swipeDirection = 'right';
         } else if (moveDistance > 0) {
@@ -63,12 +69,24 @@ View.prototype = {
         if(this.swipeTime < 500) {
             if(this.touchstartx < 100 && this.swipeDirection === 'right') {
                 this.leftMenu.classList.add('active');
+                this.leftMenuItems.forEach(item => {
+                    item.classList.add('active');
+                });
             } else if(this.touchstartx < 250 && this.swipeDirection === 'left') {
                 this.leftMenu.classList.remove('active');
+                this.leftMenuItems.forEach(item => {
+                    item.classList.remove('active');
+                });
             } else if(this.touchstartx > (this.width - 100) && this.swipeDirection === 'left') {
                 this.rightMenu.classList.add('active');
+                this.rightMenuItems.forEach(item => {
+                    item.classList.add('active');
+                });
             } else if(this.touchstartx > (this.width - 250) && this.swipeDirection === 'right') {
                 this.rightMenu.classList.remove('active');
+                this.rightMenuItems.forEach(item => {
+                    item.classList.remove('active');
+                });
             }
         }
     },
@@ -83,6 +101,7 @@ View.prototype = {
         enemies.forEach(e => {
             e.update();
         });
+        this.speedMeterValue(player.speed);
     },
     showLeftMenu: function(e) {
     }
@@ -134,7 +153,7 @@ Controller.prototype = {
         this.oldGamma = this.gamma;
         this.oldAlpha = this.alpha;
         let speedEl = document.querySelector('.speed--info');
-        speedEl.innerHTML = this.model.player.speed + ' : Phase Level ' + player.phaseLevel;
+        speedEl.innerHTML = this.model.player.speed;
         this.view.render(this.model.enemies, this.model.lasers, this.model.player);
     },
     weaponInit: function(e) {
@@ -179,7 +198,6 @@ Controller.prototype = {
 
 let canvas = document.getElementById('canvas');
 canvas.width = canvas.clientWidth;
-console.log(canvas.offsetWidth, canvas.offsetHeight, window.innerWidth,  window.innerHeight)
 canvas.height = canvas.clientHeight;
 let sprite = new Image();
 let background = new Image();
@@ -256,6 +274,9 @@ Player.prototype.afterImage = function() {
         this.xAfter -= 1;
         this.xSize += 2;
     }
+    if(this.xSize > 300) {
+        this.xSize = this.width;
+    }
     /*
     if(this.direction === 'left' && this.x < 5) {
         this.xAfter -=3;
@@ -265,8 +286,9 @@ Player.prototype.afterImage = function() {
         this.xAfter +=3;
 
     }*/
-    if(this.yAfter >= this.y) {
+    if(this.yAfter >= this.y || this.yAfter > (this.y-50)) {
         this.yAfter +=2;
+    } else if (this.yAfter < this.y) {
     }
     if (this.yAfter >= canvas.height) {
         this.yAfter = this.y;
@@ -331,18 +353,6 @@ Player.prototype.update = function() {
             this.frameIndex = 0;
         }
     }
-    /*
-    if(this.speed > 300 && this.speed <= 500) {
-        this.rowIndex = 1;
-    } else if(this.speed > 500) {
-        this.rowIndex = 2;
-    } else if(this.speed < 200) {
-        this.rowIndex = 0;
-    } else if(this.direction === 'left') {
-        this.rowIndex = 3;
-    } else if(this.direction === 'right') {
-        this.rowIndex = 4;
-    }*/
     if(this.direction === 'straight') {
         this.rowIndex = 0;
         if(this.speed > 300 && this.speed <= 350) {
@@ -358,8 +368,6 @@ Player.prototype.update = function() {
     } else if(this.direction === 'left') {
         this.rowIndex = 3;
     }
-    //if(this.direction === 'left' && this.x < 5) {this.rowIndex = 4;}
-    //if(this.direction === 'right' && this.x > (canvas.width - this.width - 5)) {this.rowIndex = 3;}
     //Updates through the background sprite sheet
     if(this.tickCountBG > this.ticksPerBackgroundFrame) {
         this.tickCountBG = 0;
@@ -388,7 +396,7 @@ Player.prototype.update = function() {
         this.y -= 1;
     } else if(this.jumping === false && this.falling === true) {
         this.y += 1;
-        if(this.y === (canvas.height-this.spriteHeight)) {
+        if(this.y <= (canvas.height-this.spriteHeight + 1) && this.y >= (canvas.height-this.spriteHeight)) {
             this.falling = false;
             this.canJump = true;
         }
@@ -398,17 +406,12 @@ Player.prototype.update = function() {
     //Draw the after images while jumping or running.
     if(this.jumping === true || this.falling === true) {
         this.drawJumping();
-        if(this.afterImageActive === true) {
-            for(let i=0;i<5;i++) {
-                this.afterImage();
-            }
-        }
     } else {
         this.draw();
-        if(this.afterImageActive === true) {
-            for(let i=0;i<10;i++) {
-                this.afterImage();
-            }
+    }
+    if(this.afterImageActive === true) {
+        for(let i=0;i<10;i++) {
+            this.afterImage();
         }
     }
 };
