@@ -4,14 +4,71 @@
   <title>Alex Morishita - Developer</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/touch-slider.css">
   <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
 </head>
 <body>
 	<main>
 		<section class="bg--canvasContainer">
-			<div class="menu disabled">
-				<h2>Game must be played in landscape mode</h2>
+			<div class="menu--disabled">
+				<h2 class="warning">Game must be played in landscape mode</h2>
+			</div>
+			<div class="menu">
+				<div class="col--50">
+					<div class="btn--container">
+						<li class="btn--menu" data-target="start">Main Menu</li>
+						<li class="btn--menu" data-target="controls">Controls</li>
+						<li class="btn--menu" data-target="objectives">Objectives</li>
+						<li class="btn--menu" data-target="about">About</li>
+					</div>
+				</div>
+				<div class="col--50 flex--center">
+					<div data-receiver="start" class="menu--sub menu--logo">
+						<img src="images/power.png" alt="Flash Logo" width="100%">
+						<p class="btn--start">Click to start</p>
+					</div>
+					<div data-receiver="controls" class="menu--sub menu--controls active">
+						<div class="touchSlider-container">
+						<div class="slider-wrap">
+						  <div class="slider" id="slider">
+						    <div class="holder">
+						      <div class="slide-wrapper">
+						        <div class="slide">
+						          <h2>Tilt your phone left and right to change direction.</h2>
+						        </div>
+						      </div>
+						      <div class="slide-wrapper">
+						        <div class="slide">
+						        	<h2>Quickly rotate the phone along its vertical axis to perform a jump.</h2>
+						        </div>
+						      </div>
+						      <div class="slide-wrapper">
+						        <div class="slide">
+							        <h2>Swipe from the left or right side of the screen to display additional in game options.</h2>
+						        	<div class="slide-image">
+						        	</div>
+						        </div>
+						      </div>
+						    </div>
+						  </div>
+						</div>
+						  
+						</div>
+						<div class="menu--sub-content">
+							<li>Quickly rotate phone to jump.</li>
+						</div>
+						<div class="menu--sub-content">
+							<li>Tap the screen to use lightning.</li>
+						</div>
+					</div>
+					<div data-receiver="objectives" class="menu--sub menu--objectives">
+						<p>Collect items and avoid enemies to increase your speed.  Reach the speed threshold for each level to advance.</p>
+					</div>
+					<div data-receiver="about" class="menu--sub menu--about">
+						<p>This game was built using the HTML5 Canvas and vanilla javascript.</p>
+					</div>
+				</div>
 			</div>
 			<canvas id="canvas">
 			</canvas>
@@ -45,6 +102,7 @@
 		
 	</main>
 
-<script src="script.js"></script>
+<script src="js/script.js"></script>
+<script src="js/touch-slider.js"></script>
 </body>
 </html>

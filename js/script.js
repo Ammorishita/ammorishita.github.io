@@ -33,18 +33,41 @@ function View(canvas, model) {
     this.canvas = canvas;
     this.width = window.innerWidth;
     this.height = window.innerHeight;
+    this.mainMenu = document.querySelector('.menu');
     this.leftMenu = document.querySelector('.menu--left');
     this.rightMenu = document.querySelector('.menu--right');
     this.rightMenuItems = document.querySelectorAll('.menu--item-right');
     this.leftMenuItems = document.querySelectorAll('.menu--item-left');
     this.speedMeter = document.querySelector('.speed-meter');
+    this.menuButtons = document.querySelector('.btn--container');
+    this.menuSubs = document.querySelectorAll('.menu--sub');
+    this.startButton = document.querySelector('.btn--start');
 };
 View.prototype = {
     init: function() {
         this.canvasElement = this.canvas.canvas;
+        this.attachListeners();
         this.canvasElement.addEventListener('touchstart', this.beginTouchEvent.bind(this), false);
         this.canvasElement.addEventListener('touchmove', this.touchEvent.bind(this), false);
         this.canvasElement.addEventListener('touchend', this.endTouchEvent.bind(this), false);
+    },
+    attachListeners: function() {
+        this.menuButtons.addEventListener('click', this.menuControls.bind(this), false);
+        this.startButton.addEventListener('click', this.startGame.bind(this), false);
+    },
+    startGame: function() {
+        this.mainMenu.classList.add('menu--disabled');
+    },
+    menuControls: function(e) {
+        let target = e.target.getAttribute('data-target');
+        this.menuSubs.forEach(e => {
+            let receiver = e.getAttribute('data-receiver');
+            if(receiver === target) {
+                e.classList.add('active');
+            } else {
+                e.classList.remove('active');
+            }
+        });
     },
     beginTouchEvent: function(event) {
         this.touchstartx = event.touches[0].pageX;
@@ -599,5 +622,4 @@ let model = new Model(player, enemies, lasers);
 let view = new View(c, model);
 let controller = new Controller(model,view);
 controller.init();
-
 })();
