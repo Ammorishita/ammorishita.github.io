@@ -76,6 +76,9 @@ html, body {
     justify-content: center;
     align-items: center;
 }
+.menu--warning {
+    display: none;
+}
 .menu--disabled {
     display: none;
 }
@@ -166,5 +169,12 @@ html, body {
         margin: auto;
         text-align: center;
         display: block;
+    }
+    .menu--warning {
+        display: block;
+        position: absolute;
+        z-index: 150;
+        background: dodgerblue;
+        height: 100%;
     }
 }
