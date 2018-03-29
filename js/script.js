@@ -58,12 +58,15 @@ function View(canvas, model) {
     this.menuItems = document.querySelectorAll('.menu--item');
     this.speedMeter = document.querySelector('.speed-meter');
     this.menuButtons = document.querySelector('.btn--container');
+    this.startOverButton = document.querySelector('#startover');
+    this.returnToMainMenuButton = document.querySelector('#returnToMainMenuBtn');
     this.menuSubs = document.querySelectorAll('.menu--sub');
     this.startButton = document.querySelector('.btn--start');
     this.leftMenuButtons = document.querySelectorAll('.btn--menu');
     this.menuSlider = document.querySelector('.menu--controls');
     this.showControls = false;
     this.speedDisplayValue =  document.querySelector('.speed--info');
+    this.gameOver = document.querySelector('#gameover');
 };
 View.prototype = {
     init: function() {
@@ -80,6 +83,30 @@ View.prototype = {
         this.menuItems.forEach(e => {
             e.addEventListener('click', this.menuItemControls.bind(this), false);
         });
+        this.gameOver.addEventListener('click', this.gameOverMenu.bind(this), false);
+    },
+    gameOverMenu: function(e) {
+        let target = e.target.getAttribute('data-function');
+        switch(target) {
+            case 'startover':
+                this.gameOver.classList.remove('active');
+                this.model.enemies = [];
+                this.model.player.speed = 200;
+                this.speedDisplayValue.innerHTML = 200;
+                this.startGame();
+                break;
+            case 'returnToMainMenu':
+                this.mainMenu.classList.remove('menu--disabled');
+                this.gameOver.classList.remove('active');
+                this.model.gamePaused = true;
+                this.menuSlider.classList.remove('game--active', 'active');
+                this.model.enemies = [];
+                this.model.player.speed = 200;
+                this.speedDisplayValue.innerHTML = 200;
+                break;
+            default:
+                break;
+        }
     },
     addEnemies: function() {
         for(let i=0;i<3;i++) {
@@ -99,6 +126,7 @@ View.prototype = {
     },
     startGame: function() {
         this.mainMenu.classList.add('menu--disabled');
+        this.gameOver.classList.remove('active');
         this.model.gamePaused = false;
         model.enemies = [];
         this.addEnemies();
@@ -204,6 +232,9 @@ View.prototype = {
             enemies.forEach(e => {
                 e.update();
             });
+        }
+        if(model.player.speed < 100) {
+            this.gameOver.classList.add('active');
         }
         this.speedMeterValue(player.speed);
     },
@@ -700,7 +731,6 @@ for(let i=0;i<3;i++) {
 let posX = canvas.offsetWidth/3;
 // let posY = canvas.offsetHeight - 170;
 let posY = window.innerHeight - 170;
-console.log(canvas.offsetHeight, window.innerHeight)
 let lasers = [];
 let player = new Player(posX,posY,125,170,'black', options);
 let model = new Model(player, enemies, lasers);
