@@ -698,7 +698,9 @@ for(let i=0;i<3;i++) {
     enemies.push(new Enemy(enemyX,50,radius,enemyDx,enemyDy,color,image,width));
 }*/
 let posX = canvas.offsetWidth/3;
-let posY = canvas.offsetHeight - 170;
+// let posY = canvas.offsetHeight - 170;
+let posY = window.innerHeight - 170;
+console.log(canvas.offsetHeight, window.innerHeight)
 let lasers = [];
 let player = new Player(posX,posY,125,170,'black', options);
 let model = new Model(player, enemies, lasers);
