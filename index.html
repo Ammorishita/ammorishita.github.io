@@ -15,20 +15,20 @@
 				<h2 class="warning">Game must be played in landscape mode</h2>
 			</div>
 			<div class="menu">
-				<div class="col--50">
-					<div class="btn--container">
-						<li class="btn--menu" data-target="start">Main Menu</li>
+				<div class="col--30 flex--center">
+					<div class="btn--container flex--col-center">
+						<li class="btn--menu active" data-target="start">Main Menu</li>
 						<li class="btn--menu" data-target="controls">Controls</li>
 						<li class="btn--menu" data-target="objectives">Objectives</li>
 						<li class="btn--menu" data-target="about">About</li>
 					</div>
 				</div>
-				<div class="col--50 flex--center">
-					<div data-receiver="start" class="menu--sub menu--logo">
-						<img src="images/power.png" alt="Flash Logo" width="100%">
+				<div class="col--70 flex--center">
+					<div data-receiver="start" class="menu--sub menu--start active">
+						<img class="menu--logo" src="images/power.png" alt="Flash Logo" width="50%">
 						<p class="btn--start">Click to start</p>
 					</div>
-					<div data-receiver="controls" class="menu--sub menu--controls active">
+					<div data-receiver="controls" class="menu--sub menu--controls">
 						<div class="touchSlider-container">
 						<div class="slider-wrap">
 						  <div class="slider" id="slider">
@@ -36,16 +36,19 @@
 						      <div class="slide-wrapper">
 						        <div class="slide">
 						          <h2>Tilt your phone left and right to change direction.</h2>
+						          <img src="images/controls-tilt.svg" alt="tilting phone">
 						        </div>
 						      </div>
 						      <div class="slide-wrapper">
 						        <div class="slide">
 						        	<h2>Quickly rotate the phone along its vertical axis to perform a jump.</h2>
+						        	<img src="images/controls-jump.svg" alt="jumping phone">
 						        </div>
 						      </div>
 						      <div class="slide-wrapper">
 						        <div class="slide">
 							        <h2>Swipe from the left or right side of the screen to display additional in game options.</h2>
+					        		<img src="images/controls-swipe.svg" alt="phone swipe">
 						        	<div class="slide-image">
 						        	</div>
 						        </div>
@@ -74,24 +77,24 @@
 			</canvas>
 			<div class="menu--alt menu--left">
 				<li class="function--perception">
-					<img class="menu--item menu--item-left" src="images/menu-perception.svg" alt="Menu Perception">
+					<img data-function="perception" class="menu--item menu--item-left" src="images/menu-perception.svg" alt="Menu Perception">
 				</li>
 				<li class="function--lightning">
-					<img class="menu--item menu--item-left" src="images/menu-lightning.svg" alt="Menu Lightning">
+					<img data-function="lightning" class="menu--item menu--item-left" src="images/menu-lightning.svg" alt="Menu Lightning">
 				</li>
 				<li class="function--phase">
-					<img class="menu--item menu--item-left" src="images/menu-phase.svg" alt="Menu Phase">
+					<img data-function="phase" class="menu--item menu--item-left" src="images/menu-phase.svg" alt="Menu Phase">
 				</li>
 			</div>
 			<div class="menu--alt menu--right">
 				<li class="function--quit">
-					<img class="menu--item menu--item-right" src="images/menu-quit.svg" alt="Menu Quit">
+					<img data-function="quit" class="menu--item menu--item-right" src="images/menu-quit.svg" alt="Menu Quit">
 				</li>
 				<li class="function--pause">
-					<img class="menu--item menu--item-right" src="images/menu-pause.svg" alt="Menu Pause">
+					<img data-function="pause" class="menu--item menu--item-right" src="images/menu-pause.svg" alt="Menu Pause">
 				</li>
-				<li class="function--">
-					<img class="menu--item menu--item-right" src="images/menu-controls.svg" alt="Menu Controls">
+				<li class="function--controls">
+					<img data-function="controls" class="menu--item menu--item-right" src="images/menu-controls.svg" alt="Menu Controls">
 				</li>
 			</div>
 			<div class="info">

@@ -38,10 +38,12 @@ function View(canvas, model) {
     this.rightMenu = document.querySelector('.menu--right');
     this.rightMenuItems = document.querySelectorAll('.menu--item-right');
     this.leftMenuItems = document.querySelectorAll('.menu--item-left');
+    this.menuItems = document.querySelectorAll('.menu--item');
     this.speedMeter = document.querySelector('.speed-meter');
     this.menuButtons = document.querySelector('.btn--container');
     this.menuSubs = document.querySelectorAll('.menu--sub');
     this.startButton = document.querySelector('.btn--start');
+    this.leftMenuButtons = document.querySelectorAll('.btn--menu');
 };
 View.prototype = {
     init: function() {
@@ -54,12 +56,19 @@ View.prototype = {
     attachListeners: function() {
         this.menuButtons.addEventListener('click', this.menuControls.bind(this), false);
         this.startButton.addEventListener('click', this.startGame.bind(this), false);
+        this.menuItems.forEach(e => {
+            e.addEventListener('click', this.menuItemControls.bind(this), false);
+        });
     },
     startGame: function() {
         this.mainMenu.classList.add('menu--disabled');
     },
     menuControls: function(e) {
         let target = e.target.getAttribute('data-target');
+        this.leftMenuButtons.forEach(e => {
+            e.classList.remove('active');
+        });
+        e.target.classList.add('active');
         this.menuSubs.forEach(e => {
             let receiver = e.getAttribute('data-receiver');
             if(receiver === target) {
@@ -68,6 +77,9 @@ View.prototype = {
                 e.classList.remove('active');
             }
         });
+    },
+    menuItemControls: function(e) {
+        console.log(e.target)
     },
     beginTouchEvent: function(event) {
         this.touchstartx = event.touches[0].pageX;

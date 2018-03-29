@@ -8,7 +8,6 @@ html {
 }
 * {
   box-sizing: border-box;
-  font-family: arial, sans-serif;
 }
 .touchSlider-container .slide h1,h2,p {
   text-align: center;
@@ -16,7 +15,7 @@ html {
 .touchSlider-container {
   position: relative;
   height: 100%;
-  width: 400px;
+  width: 300px;
   margin: auto;
 }
 .touchSlider-container .slider-wrap {
@@ -69,7 +68,7 @@ html {
   height: 100%;
   position: relative;
   overflow: hidden;
-  background: dodgerblue;
+  background: rgba(32,32,32,.8);
 }
 
 .touchSlider-container .slide {
@@ -105,8 +104,7 @@ html {
 }
 
 .touchSlider-container .slide div {
-  width: 300px;
-  height: 500px;
+  width: 100%;
   z-index: 0;
 }
 .touchSlider-container .arrow-nav {
@@ -140,15 +138,15 @@ html {
   margin-right: auto;
   left: 0;
   right: 0;
-  width: 50%;
+  width: 100%;
   position: absolute;
-  bottom: 0;
+  bottom: 25px;
   text-align: center;
 }
 .touchSlider-container .pagination li {
   width: 50px;
   height: 20px;
-  background: purple;
+  background: yellow;
   border-radius: 15px;
   display: inline-block;
   margin: 0 .5rem;
@@ -157,5 +155,5 @@ html {
   cursor: pointer;
 }
 .touchSlider-container .pagination li.pagination-active {
-  background: lime;
+  background: red;
 }
