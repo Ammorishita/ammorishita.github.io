@@ -28,49 +28,56 @@
 						<img class="menu--logo" src="images/power.png" alt="Flash Logo" width="50%">
 						<p class="btn--start">Click to start</p>
 					</div>
-					<div data-receiver="controls" class="menu--sub menu--controls">
-						<div class="touchSlider-container">
-						<div class="slider-wrap">
-						  <div class="slider" id="slider">
-						    <div class="holder">
-						      <div class="slide-wrapper">
-						        <div class="slide">
-						          <h2>Tilt your phone left and right to change direction.</h2>
-						          <img src="images/controls-tilt.svg" alt="tilting phone">
-						        </div>
-						      </div>
-						      <div class="slide-wrapper">
-						        <div class="slide">
-						        	<h2>Quickly rotate the phone along its vertical axis to perform a jump.</h2>
-						        	<img src="images/controls-jump.svg" alt="jumping phone">
-						        </div>
-						      </div>
-						      <div class="slide-wrapper">
-						        <div class="slide">
-							        <h2>Swipe from the left or right side of the screen to display additional in game options.</h2>
-					        		<img src="images/controls-swipe.svg" alt="phone swipe">
-						        	<div class="slide-image">
-						        	</div>
-						        </div>
-						      </div>
-						    </div>
-						  </div>
-						</div>
-						  
-						</div>
-						<div class="menu--sub-content">
-							<li>Quickly rotate phone to jump.</li>
-						</div>
-						<div class="menu--sub-content">
-							<li>Tap the screen to use lightning.</li>
-						</div>
-					</div>
 					<div data-receiver="objectives" class="menu--sub menu--objectives">
-						<p>Collect items and avoid enemies to increase your speed.  Reach the speed threshold for each level to advance.</p>
+						<p>Collect items and avoid enemies to increase your speed.  Reach the speed threshold for each level to advance. If your speed drops below 100 you lose.</p>
+						<div class="row">
+							<img src="images/power2.png" alt="Power Item">
+							<li>+10 speed bonus</li>
+						</div>
+						<div class="row">
+							<img src="images/negativePower.png" alt="Negative Power">
+							<li>-20 speed bonus</li>
+						</div>
 					</div>
 					<div data-receiver="about" class="menu--sub menu--about">
 						<p>This game was built using the HTML5 Canvas and vanilla javascript.</p>
 					</div>
+				</div>
+			</div>
+			<div data-receiver="controls" class="menu--sub menu--controls">
+				<div class="touchSlider-container">
+					<div class="slider-wrap">
+						<div class="slider" id="slider">
+							<div class="holder">
+							  <div class="slide-wrapper">
+							    <div class="slide">
+							      <h2>Tilt your phone left and right to change direction.</h2>
+							      <img src="images/controls-tilt.svg" alt="tilting phone">
+							    </div>
+							  </div>
+							  <div class="slide-wrapper">
+							    <div class="slide">
+							    	<h2>Quickly rotate the phone up and down to perform a jump.</h2>
+							    	<img src="images/controls-jump.svg" alt="jumping phone">
+							    </div>
+							  </div>
+							  <div class="slide-wrapper">
+							    <div class="slide">
+							        <h2>Swipe from the left or right side of the screen to display additional in game options.</h2>
+									<img src="images/controls-swipe.svg" alt="phone swipe">
+							    	<div class="slide-image">
+							    	</div>
+							    </div>
+							  </div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="menu--sub-content">
+					<li>Quickly rotate phone to jump.</li>
+				</div>
+				<div class="menu--sub-content">
+					<li>Tap the screen to use lightning.</li>
 				</div>
 			</div>
 			<canvas id="canvas">

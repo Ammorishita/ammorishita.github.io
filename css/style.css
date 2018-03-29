@@ -18,6 +18,9 @@ html, body {
     background: #222;
     overflow: hidden;
 }
+li {
+    list-style-type: none;
+}
 #canvas {
     max-width: 650px;
     min-width: 550px;
@@ -57,6 +60,12 @@ html, body {
     flex-flow: column;
     justify-content: center;
 }
+.row {
+    display: flex;
+}
+.row img {
+    margin-right: 15px;
+}
 /* ======= Heads Up Display ==
 =========================== */
 .info {
@@ -78,7 +87,7 @@ html, body {
 =========================== */
 .btn--menu {
     border-radius: 5px;
-    border: 1px solid cyan;
+    border: 1px solid red;
     padding: 5px;
     list-style-type: none;
     width: 140px;
@@ -86,10 +95,10 @@ html, body {
     transition: .4s all;
 }
 .btn--menu:hover {
-    border: 1px solid #fff;
+    border: 1px solid orange;
 }
 .btn--menu.active {
-    border: 1px solid #fff;
+    border: 1px solid orange;
 }
 .menu {
     width: 100%;
@@ -97,7 +106,7 @@ html, body {
     position: absolute;
     z-index: 100;
     background-color: #222;
-    color: cyan;
+    color: rgb(252,245,3);
     font-family: 'Roboto';
     display: flex;
     justify-content: center;
@@ -142,7 +151,20 @@ html, body {
     right: 0;
     bottom: 0;
     margin: auto;
+    flex-flow: row;
     border: 1px solid blue;
+    pointer-events: none;
+    width: 300px;
+    right: 20px;
+}
+.menu--controls.active {
+    opacity: 1;
+    z-index: 100;
+    left: auto;
+    pointer-events: auto;
+}
+.menu--controls.game--active {
+    right: 150px;
 }
 .menu--controls img {
     max-width: 100%;
@@ -150,6 +172,7 @@ html, body {
 .menu--controls h2 {
     font-size: 15px;
     padding: 5px;
+    color: cyan;
 }
 .menu--objectives {
     border: 1px solid yellow;
@@ -206,6 +229,7 @@ html, body {
     color: red;
     font-weight: bold;
     font-size: 20px;
+    width: 75px;
 }
 .user--interface {
 

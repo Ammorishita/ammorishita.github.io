@@ -10,6 +10,8 @@ function Model(player, enemies, lasers) {
     this.player = player;
     this.enemies = enemies;
     this.lasers = lasers;
+    this.gameStarted = false;
+    this.gamePaused = false;
 };
 Model.prototype = {
     createLaser: function(e) {
@@ -21,6 +23,20 @@ Model.prototype = {
     },
     addLaser: function(x,y) {
        // this.lasers.push(new Laser(x,y));
+    },
+    addEnemy: function() {
+        let enemyX = Math.floor(Math.random() * ((canvas.width/2 + 50) - (canvas.width/2 - 50)) + (canvas.width/2 - 50));
+        let enemyDx = Math.random() < 0.5 ? -.2 : .2;
+        let enemyDy = 1;
+        const radius = (Math.random() * 5) + 5;
+        let color;
+        let width = 5;
+        let image = 'images/power.png';
+        color = radius > 7.5 ? 'red' : 'blue';
+        if(color === 'blue') {
+            image = 'images/negativePower.png';
+        }
+        this.model.enemies.push(new Enemy(enemyX,50,radius,enemyDx,enemyDy,color,image,width));   
     }
 
 }
@@ -31,6 +47,7 @@ THE VIEW : Draws all elements on the page
 
 function View(canvas, model) {
     this.canvas = canvas;
+    this.model = model;
     this.width = window.innerWidth;
     this.height = window.innerHeight;
     this.mainMenu = document.querySelector('.menu');
@@ -44,11 +61,15 @@ function View(canvas, model) {
     this.menuSubs = document.querySelectorAll('.menu--sub');
     this.startButton = document.querySelector('.btn--start');
     this.leftMenuButtons = document.querySelectorAll('.btn--menu');
+    this.menuSlider = document.querySelector('.menu--controls');
+    this.showControls = false;
+    this.speedDisplayValue =  document.querySelector('.speed--info');
 };
 View.prototype = {
     init: function() {
         this.canvasElement = this.canvas.canvas;
         this.attachListeners();
+        this.addEnemies();
         this.canvasElement.addEventListener('touchstart', this.beginTouchEvent.bind(this), false);
         this.canvasElement.addEventListener('touchmove', this.touchEvent.bind(this), false);
         this.canvasElement.addEventListener('touchend', this.endTouchEvent.bind(this), false);
@@ -60,8 +81,27 @@ View.prototype = {
             e.addEventListener('click', this.menuItemControls.bind(this), false);
         });
     },
+    addEnemies: function() {
+        for(let i=0;i<3;i++) {
+            let enemyX = Math.floor(Math.random() * ((canvas.width/2 + 50) - (canvas.width/2 - 50)) + (canvas.width/2 - 50));
+            let enemyDx = Math.random() < 0.5 ? -.2 : .2;
+            let enemyDy = 1;
+            const radius = (Math.random() * 5) + 5;
+            let color;
+            let width = 5;
+            let image = 'images/power.png';
+            color = radius > 7.5 ? 'red' : 'blue';
+            if(color === 'blue') {
+                image = 'images/negativePower.png';
+            }
+            this.model.enemies.push(new Enemy(enemyX,50,radius,enemyDx,enemyDy,color,image,width));  
+        }
+    },
     startGame: function() {
         this.mainMenu.classList.add('menu--disabled');
+        this.model.gamePaused = false;
+        model.enemies = [];
+        this.addEnemies();
     },
     menuControls: function(e) {
         let target = e.target.getAttribute('data-target');
@@ -79,14 +119,41 @@ View.prototype = {
         });
     },
     menuItemControls: function(e) {
-        console.log(e.target)
+        let button = e.target.getAttribute('data-function');
+        switch(button) {
+            case 'quit':
+                this.mainMenu.classList.remove('menu--disabled');
+                this.model.gamePaused = true;
+                this.menuSlider.classList.remove('game--active', 'active');
+                this.model.enemies = [];
+                this.model.player.speed = 200;
+                this.speedDisplayValue.innerHTML = 200;
+                break;
+            case 'pause':
+                this.model.gamePaused = !this.model.gamePaused;
+                this.menuSlider.classList.remove('game--active', 'active');
+                break;
+            case 'controls':
+                this.model.gamePaused = !this.model.gamePaused;
+                this.menuSlider.classList.toggle('active');
+                this.menuSlider.classList.toggle('game--active');
+                break;
+            case 'perception':
+                break;
+            case 'lightning':
+                break;
+            case 'phase':
+                break;
+            default:
+                break;
+        }
     },
     beginTouchEvent: function(event) {
         this.touchstartx = event.touches[0].pageX;
         this.timestart = new Date().getTime();
     },
     speedMeterValue: function(value) {
-        this.speedMeter.style.width = value + 'px';
+        this.speedMeter.style.width = value/5 + 'px';
     },
     touchEvent: function(event) {
         this.touchmovex = event.touches[0].pageX;    
@@ -133,9 +200,11 @@ View.prototype = {
             e.update();
         });
         player.update();
-        enemies.forEach(e => {
-            e.update();
-        });
+        if(model.gameStarted === true && enemies.length > 0) {
+            enemies.forEach(e => {
+                e.update();
+            });
+        }
         this.speedMeterValue(player.speed);
     },
     showLeftMenu: function(e) {
@@ -161,11 +230,6 @@ Controller.prototype = {
         window.addEventListener('deviceorientation', this.checkRotation.bind(this), false);
         window.setInterval(this.checkMotion.bind(this),16);
         this.canvas.addEventListener('click', this.weaponInit.bind(this), false);
-        this.alphaEl = document.querySelector('.alpha');
-        this.betaEl = document.querySelector('.beta');
-        this.gammaEl = document.querySelector('.gamma');
-        this.flicked = document.querySelector('.flicked');
-        this.dy = document.querySelector('.dy');
     },
     resizeCanvas: function() {
         this.canvas.width = window.innerWidth;
@@ -174,22 +238,28 @@ Controller.prototype = {
     render: function() {
         //Checks the phone orientation
         window.requestAnimationFrame(this.render.bind(this));
-        if(this.beta <= -5 && this.beta >= -20) {
-            this.model.player.direction = 'left';
-        } else if (this.beta > 5 && this.beta <= 20) {
-            this.model.player.direction = 'right';
-        } else if (this.beta <= 5 && this.beta > -4) {
-            this.model.player.direction = 'straight';
+        if(this.model.gamePaused === false) {
+            if(this.beta <= -5 && this.beta >= -20) {
+                this.model.player.direction = 'left';
+            } else if (this.beta > 5 && this.beta <= 20) {
+                this.model.player.direction = 'right';
+            } else if (this.beta <= 5 && this.beta > -4) {
+                this.model.player.direction = 'straight';
+            }
+            if(this.direction === 'jumped') {
+                this.model.player.direction = 'jumped';
+            }
+            this.oldBeta = this.beta;
+            this.oldGamma = this.gamma;
+            this.oldAlpha = this.alpha;
+            let speedEl = document.querySelector('.speed--info');
+            speedEl.innerHTML = this.model.player.speed;
+            if(this.view.mainMenu.classList.contains('menu--disabled')) {
+                this.model.gameStarted = true;
+            }
+            this.view.render(this.model.enemies, this.model.lasers, this.model.player);
+            
         }
-        if(this.direction === 'jumped') {
-            this.model.player.direction = 'jumped';
-        }
-        this.oldBeta = this.beta;
-        this.oldGamma = this.gamma;
-        this.oldAlpha = this.alpha;
-        let speedEl = document.querySelector('.speed--info');
-        speedEl.innerHTML = this.model.player.speed;
-        this.view.render(this.model.enemies, this.model.lasers, this.model.player);
     },
     weaponInit: function(e) {
         this.model.createLaser(e);
@@ -312,15 +382,6 @@ Player.prototype.afterImage = function() {
     if(this.xSize > 300) {
         this.xSize = this.width;
     }
-    /*
-    if(this.direction === 'left' && this.x < 5) {
-        this.xAfter -=3;
-
-    }
-    if(this.direction === 'right' && this.x > (canvas.width - this.width - 5)) {
-        this.xAfter +=3;
-
-    }*/
     if(this.yAfter >= this.y || this.yAfter > (this.y-50)) {
         this.yAfter +=2;
     } else if (this.yAfter < this.y) {
@@ -450,6 +511,11 @@ Player.prototype.update = function() {
         }
     }
 };
+
+/* ==================================
+=============ENEMY OBJECT ==============
+========================================*/
+
 let Enemy = function(x,y,r,dx,dy,color,image,width){
     let itemSrc = new Image();
     if(color === 'blue') {
@@ -483,7 +549,7 @@ Enemy.prototype.addEnemy = function() {
     //let dx = Math.random() * 2 + 2;
     let dx = 0;
     let dy = Math.random() * 3 + 2;
-    enemies.push(new Enemy(x,y,radius,dx,dy,color,image,5));
+    model.enemies.push(new Enemy(x,y,radius,dx,dy,color,image,5));
 };
 Enemy.prototype.draw = function(color) {
     c.beginPath();
@@ -506,8 +572,10 @@ Enemy.prototype.draw = function(color) {
 Enemy.prototype.update = function() {
     if (this.y > canvas.height) {
         let index = enemies.indexOf(this);
+        let indexModel = model.enemies.indexOf(this);
         let color;
         enemies.splice(index,1);
+        model.enemies.splice(indexModel,1);
         const radius = (Math.random() * 5) + 5;
         let x = Math.floor(Math.random() * ((canvas.width/2 + 50) - (canvas.width/2 - 50)) + (canvas.width/2 - 50));
         //let y = Math.random() * (canvas.height - radius * 2) + radius;
@@ -518,7 +586,9 @@ Enemy.prototype.update = function() {
         let dy = 1;
         let width = 5;
         let image = 'images/power.png';
-        enemies.push(new Enemy(x,y,radius,dx,dy,color,image,width));
+        this.addEnemy();
+        //enemies.push(new Enemy(x,y,radius,dx,dy,color,image,width));
+
     }
     this.randomNum = function(min,max) {
         return Math.floor(Math.random() * (max - min + 1) + min);
@@ -526,14 +596,14 @@ Enemy.prototype.update = function() {
     this.itemSpeed = Math.pow(this.y, 1.5)/this.randomNum(1400,2000);
 
     //Basic collisions detection
-    for(let i=0;i<enemies.length;i++) {
-        let enemy = enemies[i];
+    for(let i=0;i<model.enemies.length;i++) {
+        let enemy = model.enemies[i];
         if (enemy.x < player.x + 72 &&
             enemy.x + enemy.width > player.x &&
             enemy.y < player.y + 85 &&
             enemy.height + enemy.y > player.y) {
-            let index = enemies.indexOf(enemy);
-            enemies.splice(index,1);
+            let index = model.enemies.indexOf(enemy);
+            model.enemies.splice(index,1);
             enemy.destroyed = true;
             if(enemy.color === 'red') {
                 player.speed += 10;
@@ -612,6 +682,7 @@ Laser.prototype.draw = function(color){
 };
 */
 let enemies = [];
+/*
 for(let i=0;i<3;i++) {
     let enemyX = Math.floor(Math.random() * ((canvas.width/2 + 50) - (canvas.width/2 - 50)) + (canvas.width/2 - 50));
     let enemyDx = Math.random() < 0.5 ? -.2 : .2;
@@ -625,7 +696,7 @@ for(let i=0;i<3;i++) {
         image = 'images/negativePower.png';
     }
     enemies.push(new Enemy(enemyX,50,radius,enemyDx,enemyDy,color,image,width));
-}
+}*/
 let posX = canvas.offsetWidth/3;
 let posY = canvas.offsetHeight - 170;
 let lasers = [];
