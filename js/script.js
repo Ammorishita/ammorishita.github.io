@@ -638,7 +638,9 @@ Enemy.prototype.update = function() {
         let image = 'images/power.png';
         this.addEnemy();
         //enemies.push(new Enemy(x,y,radius,dx,dy,color,image,width));
-
+    }
+    if(model.enemies.length < 3) {
+        this.addEnemy();
     }
     this.randomNum = function(min,max) {
         return Math.floor(Math.random() * (max - min + 1) + min);
@@ -665,14 +667,15 @@ Enemy.prototype.update = function() {
     }
     //Collision detection for the lightning
     for(let i=0;i<model.lightning.length;i++) {
-        let laser = model.lightning[i];
-        if (this.x < laser.originX + 25 &&
-           this.x + this.width > laser.originX &&
-           this.y < laser.originY + 25 &&
-           this.height + this.y > laser.originY) {
-            let index = model.lightning.indexOf(laser);
+        let lightning = model.lightning[i];
+        if (this.x < lightning.randomX + 25 &&
+           this.x + this.width > lightning.randomX &&
+           this.y < lightning.randomY + 25 &&
+           this.height + this.y > lightning.randomY) {
+            let index = model.lightning.indexOf(lightning);
             model.lightning.splice(index,1);
             this.destroyed = true;
+            console.log('lightning damage')
             let particleIndex = model.enemies.indexOf(this);
             model.enemies.splice(particleIndex,1);
         }
@@ -703,7 +706,7 @@ let Lightning = function(originX,originY,targetX,targetY) {
     this.targetY = targetY;
     this.originX = originX + (player.width/2);
     this.originY = originY + (player.height/2);
-    this.lightningStepCount = 0;
+    this.steps = 1;
     this.distanceY = Math.abs(this.originY - this.targetY);
     this.distanceX = Math.abs(this.targetX - this.originX);
     this.paths = [];
@@ -753,32 +756,21 @@ Lightning.prototype.update = function() {
     }*/
     //this.newX = this.originX + Math.random() * (5*this.steps);
     //this.newY = this.originY + Math.random() * (2*this.steps);
-
     //Create the different points of the lightning bolt segments
-    this.paths = [];
-    for(let i=1;i<16;i++) {
-        if(i<15) {
-            //return Math.floor(Math.random() * (max - min + 1) + min);
-            let maxX = this.originX + (this.stepWidth * (i) * this.direction);
-            let minX = this.originX + (this.stepWidth * (i-1) * this.direction)
-            let maxY = this.originY - (this.stepHeight * (i+3) * this.directionY);
-            let minY = this.originY - (this.stepHeight * (i-1) * this.directionY);
-            this.randomX = Math.floor(Math.random() * (maxX - minX + 1) + minX);
-            this.randomY = Math.floor(Math.random() * (maxY - minY + 1) + minY);
-            this.paths.push({x: this.randomX, y: this.randomY});
-        } else if(i===15) {
-            this.paths.push({x: this.targetX, y: this.targetY});
-        }
+    if(this.steps < 15) {
+        let maxX = this.originX + (this.stepWidth * (this.steps) * this.direction);
+        let minX = this.originX + (this.stepWidth * (this.steps-1) * this.direction)
+        let maxY = this.originY - (this.stepHeight * (this.steps+3) * this.directionY);
+        let minY = this.originY - (this.stepHeight * (this.steps-1) * this.directionY);
+        this.randomX = Math.floor(Math.random() * (maxX - minX + 1) + minX);
+        this.randomY = Math.floor(Math.random() * (maxY - minY + 1) + minY);
+        this.paths[this.steps] = ({x: this.randomX, y: this.randomY});
     }
-    this.randomX = Math.floor(Math.random() * (this.stepWidth) + 1);
-    this.randomY = Math.floor(Math.random() * (this.stepHeight) + 1);
-    this.steps+=1;
-    this.newX = this.newX + this.randomX * this.steps;
-    this.newY = this.newY - this.randomY * this.steps;
+    if(this.steps === 15) {
+        this.paths.push({x: this.targetX, y: this.targetY});
+    }    
     this.draw();
-    if(this.steps > 15) {
-        this.steps = 0;
-    }
+    this.steps++;
 };
 Lightning.prototype.draw = function(color){
     c.beginPath();
@@ -791,8 +783,6 @@ Lightning.prototype.draw = function(color){
         c.lineTo(this.paths[i].x, this.paths[i].y);
     }
     c.stroke();
-    if(Math.floor(this.newX) >= this.targetX) {
-    }
 };
 
 let enemies = [];
