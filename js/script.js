@@ -19,10 +19,10 @@ Model.prototype = {
         let offsetY = canvas.offsetTop;
         let x = e.clientX - offsetX;
         let y = e.clientY - offsetY;
-        this.addLightning(x,y);
+        this.addLightning(this.player.x, this.player.y,x,y);
     },
-    addLightning: function(x,y) {
-        this.lightning.push(new Lightning(x,y));
+    addLightning: function(x0,y0,x1,y1) {
+        this.lightning.push(new Lightning(x0,y0,x1,y1));
     },
     addEnemy: function() {
         let enemyX = Math.floor(Math.random() * ((canvas.width/2 + 50) - (canvas.width/2 - 50)) + (canvas.width/2 - 50));
@@ -228,7 +228,7 @@ View.prototype = {
         this.canvas.fillStyle = 'skyblue';
         this.canvas.fillRect(0,0,this.width, this.height);
         player.update();
-        lightning.forEach(e => {
+        lightning.forEach(e => { 
             e.update();
         });
         if(model.gameStarted === true && enemies.length > 0) {
@@ -296,7 +296,17 @@ Controller.prototype = {
         }
     },
     weaponInit: function(e) {
-        this.model.createLightning(e);
+        if(this.model.player.canFireLightning === true) {
+            this.model.createLightning(e);
+            this.model.player.canFireLightning = false;
+            window.setTimeout(this.weaponEnd.bind(this), 300);
+        } else {
+            console.log('lightning recharging')
+        }
+    },
+    weaponEnd: function() {
+        this.model.lightning = [];
+        this.model.player.canFireLightning = true;
     },
     checkMotion: function() {
         //Check for upwards movement on the phone
@@ -384,6 +394,7 @@ let Player = function(x,y,width,height,color,options) {
     this.rowIndex = 0;
     this.tickCount = 0;
     this.phaseLevel = 1;
+    this.canFireLightning = true;
     this.numberOfFrames = options.numberOfFrames || 1;
     this.numberOfRows = options.numberOfRows || 1;
     this.ticksPerFrame = options.ticksPerFrame || 0;
@@ -393,6 +404,8 @@ let Player = function(x,y,width,height,color,options) {
     this.ticksPerBackgroundFrame = options.ticksPerBackgroundFrame || 0;
 };
 Player.prototype.draw = function(argument){
+    c.shadowBlur = 0;
+    c.shadowColor = 'yellow';
     c.drawImage(
            this.image,
            this.frameIndex * this.spriteWidth / this.numberOfFrames,
@@ -461,6 +474,7 @@ Player.prototype.drawJumping = function() {
            170);
 };
 Player.prototype.drawBackground = function() {
+    c.shadowBlur = 0;
     c.drawImage(
            this.background,
            this.frameIndexBG * this.backgroundWidth / this.numberOfBackgroundFrames,
@@ -590,6 +604,7 @@ Enemy.prototype.draw = function(color) {
     c.beginPath();
     // c.strokeStyle = this.color;
     c.arc(this.x,this.y,this.radius, 0, Math.PI * 2, false);
+    c.shadowBlur = 0;
     //c.rect(player.x,player.y,player.size,player.size);
     // c.stroke();
     c.drawImage(
@@ -683,36 +698,50 @@ Enemy.prototype.update = function() {
     this.draw(this.color);
 };
 
-let Lightning = function(x,y) {
-    this.targetX = x;
-    this.targetY = y;
-    this.height = canvas.height - this.targetY;
+let Lightning = function(originX,originY,targetX,targetY) {
+    this.targetX = targetX;
+    this.targetY = targetY;
+    this.originX = originX + (player.width/2);
+    this.originY = originY + (player.height/2);
+    this.lightningStepCount = 0;
+    this.distanceY = Math.abs(this.originY - this.targetY);
+    this.distanceX = Math.abs(this.targetX - this.originX);
+    this.paths = [];
+    this.randomX = this.originX;
+    this.randomY = this.originY;
+    
+    //Determine the direction of the lightning bolt
     if(this.targetX < (canvas.width/2)) {
-        this.width = this.targetX;
-        this.originX = Math.floor(25);
-        this.originY = Math.floor(canvas.height - 25);
+        this.direction = -1;
     } else {
-        this.width = canvas.width - this.targetX;
-        this.originX = Math.floor(canvas.width - 25);
-        this.originY = Math.floor(canvas.height - 25);
+        this.direction = 1;
     }
-    this.magnitude = Math.sqrt(this.width * this.width + this.height * this.height);
-    this.dx = this.width / this.magnitude * 10;
-    this.dy = this.height / this.magnitude * 10;
+    if(this.targetY > this.originY) {
+        this.directionY = -1;
+    } else {
+        this.directionY = 1;
+    }
+    this.stepWidth = this.distanceX / 15;
+    this.stepHeight = this.distanceY / 15;
+    this.paths.push({x: this.originX, y: this.originY});
 };
-Lightning.prototype.addLightning = function(e) {
+Lightning.prototype.addLightning = function(x0,y0,x1,y1) {
     let offsetX = canvas.offsetLeft;
     let offsetY = canvas.offsetTop;
-    let x = e.clientX - offsetX;
-    let y = e.clientY - offsetY;
+    this.originX = x0;
+    this.originY = y0;
+    this.targetX = x1;
+    this.targetY = y1;
     //lightning.push(new Laser(x,y));
 };
 Lightning.prototype.update = function() {
+
+    /*
     if(this.targetX < (canvas.width/2)) {
         this.originX += this.dx;
     } else {
         this.originX -= this.dx;
-    }
+    }/*
     this.originY -= this.dy;
     this.originX = Math.floor(this.originX);
     this.originY = Math.floor(this.originY);
@@ -721,13 +750,49 @@ Lightning.prototype.update = function() {
         lightning.splice(index,1);
     } else {
         this.draw();
+    }*/
+    //this.newX = this.originX + Math.random() * (5*this.steps);
+    //this.newY = this.originY + Math.random() * (2*this.steps);
+
+    //Create the different points of the lightning bolt segments
+    this.paths = [];
+    for(let i=1;i<16;i++) {
+        if(i<15) {
+            //return Math.floor(Math.random() * (max - min + 1) + min);
+            let maxX = this.originX + (this.stepWidth * (i) * this.direction);
+            let minX = this.originX + (this.stepWidth * (i-1) * this.direction)
+            let maxY = this.originY - (this.stepHeight * (i+3) * this.directionY);
+            let minY = this.originY - (this.stepHeight * (i-1) * this.directionY);
+            this.randomX = Math.floor(Math.random() * (maxX - minX + 1) + minX);
+            this.randomY = Math.floor(Math.random() * (maxY - minY + 1) + minY);
+            this.paths.push({x: this.randomX, y: this.randomY});
+        } else if(i===15) {
+            this.paths.push({x: this.targetX, y: this.targetY});
+        }
+    }
+    this.randomX = Math.floor(Math.random() * (this.stepWidth) + 1);
+    this.randomY = Math.floor(Math.random() * (this.stepHeight) + 1);
+    this.steps+=1;
+    this.newX = this.newX + this.randomX * this.steps;
+    this.newY = this.newY - this.randomY * this.steps;
+    this.draw();
+    if(this.steps > 15) {
+        this.steps = 0;
     }
 };
 Lightning.prototype.draw = function(color){
     c.beginPath();
-    c.strokeStyle="blue";
-    c.rect(this.originX,this.originY,25,25);
+    c.lineWidth = Math.floor(Math.random() * (4 - 0 + 1) + 1);
+    c.strokeStyle='yellow';
+    c.shadowColor = 'red';
+    c.shadowBlur = 15;
+    c.moveTo(this.originX,this.originY);
+    for(let i=0;i<this.paths.length;i++) {
+        c.lineTo(this.paths[i].x, this.paths[i].y);
+    }
     c.stroke();
+    if(Math.floor(this.newX) >= this.targetX) {
+    }
 };
 
 let enemies = [];
