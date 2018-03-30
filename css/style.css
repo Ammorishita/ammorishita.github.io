@@ -88,7 +88,7 @@ li {
     height: 15px;
 }
 #gameover {
-    background: rgba(32,32,32,.5);
+    background: rgba(32,32,32,1);
     color: red;
     position: absolute;
     z-index: 500;
@@ -102,7 +102,7 @@ li {
     justify-content: center;
     opacity: 0;
     width: 0;
-    transition: .5s all;
+    transition: 1s all;
 }
 #gameover.active {
     width: auto;
@@ -167,6 +167,9 @@ li {
 }
 .menu--start.active > p.btn--start {
     z-index: 100;
+    border-radius: 10px;
+    border: 1px solid red;
+    padding: 5px;
 }
 .menu--logo {
 }

@@ -6,23 +6,23 @@
 THE MODEL: Controls the game variables
 =====================================*/
 
-function Model(player, enemies, lasers) {
+function Model(player, enemies, lightning) {
     this.player = player;
     this.enemies = enemies;
-    this.lasers = lasers;
+    this.lightning = lightning;
     this.gameStarted = false;
     this.gamePaused = false;
 };
 Model.prototype = {
-    createLaser: function(e) {
+    createLightning: function(e) {
         let offsetX = canvas.offsetLeft;
         let offsetY = canvas.offsetTop;
         let x = e.clientX - offsetX;
         let y = e.clientY - offsetY;
-        this.addLaser(x,y);
+        this.addLightning(x,y);
     },
-    addLaser: function(x,y) {
-       // this.lasers.push(new Laser(x,y));
+    addLightning: function(x,y) {
+        this.lightning.push(new Lightning(x,y));
     },
     addEnemy: function() {
         let enemyX = Math.floor(Math.random() * ((canvas.width/2 + 50) - (canvas.width/2 - 50)) + (canvas.width/2 - 50));
@@ -50,23 +50,26 @@ function View(canvas, model) {
     this.model = model;
     this.width = window.innerWidth;
     this.height = window.innerHeight;
+    this.showControls = false;
+    // Main menu functions and buttons
     this.mainMenu = document.querySelector('.menu');
+    this.menuButtons = document.querySelector('.btn--container');
+    this.startButton = document.querySelector('.btn--start');
+    this.leftMenuButtons = document.querySelectorAll('.btn--menu');
+    // In game menu functions and buttons
     this.leftMenu = document.querySelector('.menu--left');
     this.rightMenu = document.querySelector('.menu--right');
     this.rightMenuItems = document.querySelectorAll('.menu--item-right');
     this.leftMenuItems = document.querySelectorAll('.menu--item-left');
     this.menuItems = document.querySelectorAll('.menu--item');
-    this.speedMeter = document.querySelector('.speed-meter');
-    this.menuButtons = document.querySelector('.btn--container');
-    this.startOverButton = document.querySelector('#startover');
-    this.returnToMainMenuButton = document.querySelector('#returnToMainMenuBtn');
     this.menuSubs = document.querySelectorAll('.menu--sub');
-    this.startButton = document.querySelector('.btn--start');
-    this.leftMenuButtons = document.querySelectorAll('.btn--menu');
+    // Heads up display    
+    this.speedMeter = document.querySelector('.speed-meter');
     this.menuSlider = document.querySelector('.menu--controls');
-    this.showControls = false;
     this.speedDisplayValue =  document.querySelector('.speed--info');
     this.gameOver = document.querySelector('#gameover');
+    this.startOverButton = document.querySelector('#startover');
+    this.returnToMainMenuButton = document.querySelector('#returnToMainMenuBtn');
 };
 View.prototype = {
     init: function() {
@@ -220,14 +223,14 @@ View.prototype = {
             }
         }
     },
-    render: function(enemies, lasers, player) {
+    render: function(enemies, lightning, player) {
         this.canvas.clearRect(0,0,this.width, this.height);
         this.canvas.fillStyle = 'skyblue';
         this.canvas.fillRect(0,0,this.width, this.height);
-        lasers.forEach(e => {
+        player.update();
+        lightning.forEach(e => {
             e.update();
         });
-        player.update();
         if(model.gameStarted === true && enemies.length > 0) {
             enemies.forEach(e => {
                 e.update();
@@ -288,12 +291,12 @@ Controller.prototype = {
             if(this.view.mainMenu.classList.contains('menu--disabled')) {
                 this.model.gameStarted = true;
             }
-            this.view.render(this.model.enemies, this.model.lasers, this.model.player);
+            this.view.render(this.model.enemies, this.model.lightning, this.model.player);
             
         }
     },
     weaponInit: function(e) {
-        this.model.createLaser(e);
+        this.model.createLightning(e);
     },
     checkMotion: function() {
         //Check for upwards movement on the phone
@@ -337,7 +340,6 @@ canvas.width = canvas.clientWidth;
 canvas.height = canvas.clientHeight;
 let sprite = new Image();
 sprite.height = 200;
-console.log(sprite)
 let background = new Image();
 let spriteJumping = new Image();
 let powerItem = new Image();
@@ -520,8 +522,6 @@ Player.prototype.update = function() {
     } else if ( this.x < 0 ) {
         this.x += 2;
     }
-    console.log(window.innerHeight - this.spriteHeight)
-    console.log(this.y)
     //Detect for fast upwards movement to start jump animation
     if(this.jumping === true) {
         this.y -= 1;
@@ -648,6 +648,20 @@ Enemy.prototype.update = function() {
             this.addEnemy();
         }
     }
+    //Collision detection for the lightning
+    for(let i=0;i<model.lightning.length;i++) {
+        let laser = model.lightning[i];
+        if (this.x < laser.originX + 25 &&
+           this.x + this.width > laser.originX &&
+           this.y < laser.originY + 25 &&
+           this.height + this.y > laser.originY) {
+            let index = model.lightning.indexOf(laser);
+            model.lightning.splice(index,1);
+            this.destroyed = true;
+            let particleIndex = model.enemies.indexOf(this);
+            model.enemies.splice(particleIndex,1);
+        }
+    }
     if(player.direction === 'left') {
         this.x += .5;
         //this.y += this.dy;
@@ -668,8 +682,8 @@ Enemy.prototype.update = function() {
     this.height += .1;
     this.draw(this.color);
 };
-/*
-let Laser = function(x,y) {
+
+let Lightning = function(x,y) {
     this.targetX = x;
     this.targetY = y;
     this.height = canvas.height - this.targetY;
@@ -686,14 +700,14 @@ let Laser = function(x,y) {
     this.dx = this.width / this.magnitude * 10;
     this.dy = this.height / this.magnitude * 10;
 };
-Laser.prototype.addLaser = function(e) {
+Lightning.prototype.addLightning = function(e) {
     let offsetX = canvas.offsetLeft;
     let offsetY = canvas.offsetTop;
     let x = e.clientX - offsetX;
     let y = e.clientY - offsetY;
-    //lasers.push(new Laser(x,y));
+    //lightning.push(new Laser(x,y));
 };
-Laser.prototype.update = function() {
+Lightning.prototype.update = function() {
     if(this.targetX < (canvas.width/2)) {
         this.originX += this.dx;
     } else {
@@ -703,19 +717,19 @@ Laser.prototype.update = function() {
     this.originX = Math.floor(this.originX);
     this.originY = Math.floor(this.originY);
     if(this.originX < 0 || this.originX > canvas.width) {
-        let index = lasers.indexOf(this);
-        lasers.splice(index,1);
+        let index = lightning.indexOf(this);
+        lightning.splice(index,1);
     } else {
         this.draw();
     }
 };
-Laser.prototype.draw = function(color){
+Lightning.prototype.draw = function(color){
     c.beginPath();
     c.strokeStyle="blue";
     c.rect(this.originX,this.originY,25,25);
     c.stroke();
 };
-*/
+
 let enemies = [];
 /*
 for(let i=0;i<3;i++) {
@@ -735,9 +749,9 @@ for(let i=0;i<3;i++) {
 let posX = canvas.offsetWidth/3;
 // let posY = canvas.offsetHeight - 170;
 let posY = window.innerHeight - 170;
-let lasers = [];
+let lightning = [];
 let player = new Player(posX,posY,125,170,'black', options);
-let model = new Model(player, enemies, lasers);
+let model = new Model(player, enemies, lightning);
 let view = new View(c, model);
 let controller = new Controller(model,view);
 controller.init();
