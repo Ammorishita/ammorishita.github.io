@@ -336,6 +336,8 @@ let canvas = document.getElementById('canvas');
 canvas.width = canvas.clientWidth;
 canvas.height = canvas.clientHeight;
 let sprite = new Image();
+sprite.height = 200;
+console.log(sprite)
 let background = new Image();
 let spriteJumping = new Image();
 let powerItem = new Image();
@@ -518,12 +520,14 @@ Player.prototype.update = function() {
     } else if ( this.x < 0 ) {
         this.x += 2;
     }
+    console.log(window.innerHeight - this.spriteHeight)
+    console.log(this.y)
     //Detect for fast upwards movement to start jump animation
     if(this.jumping === true) {
         this.y -= 1;
     } else if(this.jumping === false && this.falling === true) {
         this.y += 1;
-        if(this.y <= (canvas.height-this.spriteHeight + 1) && this.y >= (canvas.height-this.spriteHeight)) {
+        if(this.y === (window.innerHeight-this.spriteHeight + 1)) {
             this.falling = false;
             this.canJump = true;
         }
