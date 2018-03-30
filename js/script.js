@@ -236,6 +236,9 @@ View.prototype = {
                 e.update();
             });
         }
+        if(model.gameStarted === true && enemies.length === 0) {
+            this.addEnemies();
+        }
         if(model.player.speed < 100) {
             this.gameOver.classList.add('active');
         }
@@ -299,7 +302,7 @@ Controller.prototype = {
         if(this.model.player.canFireLightning === true) {
             this.model.createLightning(e);
             this.model.player.canFireLightning = false;
-            window.setTimeout(this.weaponEnd.bind(this), 300);
+            window.setTimeout(this.weaponEnd.bind(this), 500);
         } else {
             console.log('lightning recharging')
         }
@@ -672,13 +675,17 @@ Enemy.prototype.update = function() {
            this.x + this.width > lightning.randomX &&
            this.y < lightning.randomY + 25 &&
            this.height + this.y > lightning.randomY) {
-            let index = model.lightning.indexOf(lightning);
-            model.lightning.splice(index,1);
-            this.destroyed = true;
-            console.log('lightning damage')
-            let particleIndex = model.enemies.indexOf(this);
-            model.enemies.splice(particleIndex,1);
+            model.lightning[0].drawExplosion();
+            window.setTimeout(this.removeLightning.bind(this),100);
         }
+    }
+    this.removeLightning = function() {
+        let index = model.lightning.indexOf(lightning);
+        model.lightning.splice(index,1);
+        this.destroyed = true;
+        console.log('lightning damage')
+        let particleIndex = model.enemies.indexOf(this);
+        model.enemies.splice(particleIndex,1);
     }
     if(player.direction === 'left') {
         this.x += .5;
@@ -712,7 +719,16 @@ let Lightning = function(originX,originY,targetX,targetY) {
     this.paths = [];
     this.randomX = this.originX;
     this.randomY = this.originY;
-    
+    //Explostion properties
+    this.frameIndexExplosion = 0;
+    this.tickCountExplosion = 0;
+    this.numberOfExplosionFrames = 6;
+    this.ticksPerExplosionFrame = 1;
+    this.explosionImage = new Image();
+    this.explosionImage.src = 'images/ExplosionSprite.png';
+    this.explosionWidth = 768;
+    this.explosionHeight = 128;
+
     //Determine the direction of the lightning bolt
     if(this.targetX < (canvas.width/2)) {
         this.direction = -1;
@@ -738,24 +754,6 @@ Lightning.prototype.addLightning = function(x0,y0,x1,y1) {
     //lightning.push(new Laser(x,y));
 };
 Lightning.prototype.update = function() {
-
-    /*
-    if(this.targetX < (canvas.width/2)) {
-        this.originX += this.dx;
-    } else {
-        this.originX -= this.dx;
-    }/*
-    this.originY -= this.dy;
-    this.originX = Math.floor(this.originX);
-    this.originY = Math.floor(this.originY);
-    if(this.originX < 0 || this.originX > canvas.width) {
-        let index = lightning.indexOf(this);
-        lightning.splice(index,1);
-    } else {
-        this.draw();
-    }*/
-    //this.newX = this.originX + Math.random() * (5*this.steps);
-    //this.newY = this.originY + Math.random() * (2*this.steps);
     //Create the different points of the lightning bolt segments
     if(this.steps < 15) {
         let maxX = this.originX + (this.stepWidth * (this.steps) * this.direction);
@@ -768,7 +766,20 @@ Lightning.prototype.update = function() {
     }
     if(this.steps === 15) {
         this.paths.push({x: this.targetX, y: this.targetY});
+        this.beginExplosion = true;
     }    
+    if(this.beginExplosion === true) {
+        this.tickCountExplosion += 1;
+        if(this.tickCountExplosion > this.ticksPerExplosionFrame) {
+            this.tickCountExplosion = 0;
+            if(this.frameIndexExplosion < this.numberOfExplosionFrames - 1) {
+                this.frameIndexExplosion += 1;
+            } else if(this.frameIndexExplosion = this.numberOfExplosionFrames) {
+                this.frameIndexExplosion = 0;
+            }
+        }
+        this.drawExplosion();
+    }
     this.draw();
     this.steps++;
 };
@@ -783,6 +794,19 @@ Lightning.prototype.draw = function(color){
         c.lineTo(this.paths[i].x, this.paths[i].y);
     }
     c.stroke();
+};
+Lightning.prototype.drawExplosion = function(){
+    c.shadowBlur = 0;
+    c.drawImage(
+           this.explosionImage,
+           this.frameIndexExplosion * this.explosionWidth / this.numberOfExplosionFrames,
+           0,
+           this.explosionWidth / this.numberOfExplosionFrames,
+           this.explosionHeight,
+           this.targetX - 64,
+           this.targetY - 64,
+           this.explosionWidth / this.numberOfExplosionFrames,
+           this.explosionHeight); 
 };
 
 let enemies = [];
