@@ -109,10 +109,12 @@ li {
     opacity: 0;
     width: 0;
     transition: 1s all;
+    pointer-events: none;
 }
 #gameover.active {
     width: auto;
     opacity: 1;
+    pointer-events: auto;
 }
 #gameover h1 {
     text-align: center;
@@ -183,13 +185,12 @@ li {
     display: block;
     position: absolute;
     opacity: 0;
-    top: 0;
+    top: 10px;
     left: 0;
     right: 0;
     bottom: 0;
     margin: auto;
     flex-flow: row;
-    border: 1px solid blue;
     pointer-events: none;
     width: 300px;
     right: 20px;
@@ -215,7 +216,7 @@ li {
     border: 1px solid yellow;
 }
 .menu--about {
-    border: 1px solid green;
+    border: 1px solid red;
 }
 /* ===== Side Menus ======
 =========================== */
@@ -250,17 +251,30 @@ li {
     left: -50px;
 }
 .menu--left {
-    left: -100px;
+    left: -300px;
+    width: 300px;
+}
+.menu--left img {
+    max-width: 100%;
+    position: absolute;
+    top: 25px;
 }
 .menu--right {
     opacity: .6;
     right: -100px;
 }
 .menu--left.active {
-    left: 0;
+    left: 100px;
 }
 .menu--right.active {
     right: 0;
+}
+.menu--weapon-container {
+    position: absolute;
+    top: 65px;
+    left: 25px;
+    font-size: 14px;
+    color: #fff;
 }
 .speed--info {
     display: inline-block;

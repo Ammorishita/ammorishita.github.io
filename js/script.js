@@ -79,6 +79,9 @@ View.prototype = {
         this.canvasElement = this.canvas.canvas;
         this.attachListeners();
         this.addEnemies();
+        this.leftMenu.addEventListener('touchstart', this.beginTouchEvent.bind(this),false);
+        this.leftMenu.addEventListener('touchmove', this.touchEvent.bind(this), false);
+        this.leftMenu.addEventListener('touchend', this.endTouchEvent.bind(this), false);
         this.canvasElement.addEventListener('touchstart', this.beginTouchEvent.bind(this), false);
         this.canvasElement.addEventListener('touchmove', this.touchEvent.bind(this), false);
         this.canvasElement.addEventListener('touchend', this.endTouchEvent.bind(this), false);
@@ -193,12 +196,14 @@ View.prototype = {
     beginTouchEvent: function(event) {
         this.touchstartx = event.touches[0].pageX;
         this.timestart = new Date().getTime();
+        console.log('start touch')
     },
     speedMeterValue: function(value) {
         this.speedMeter.style.width = value/5 + 'px';
     },
     touchEvent: function(event) {
-        this.touchmovex = event.touches[0].pageX;    
+        this.touchmovex = event.touches[0].pageX;  
+        console.log('moving')  
     },
     endTouchEvent: function(event) {
         let moveDistance = this.touchstartx - this.touchmovex;
@@ -216,7 +221,7 @@ View.prototype = {
                 this.leftMenuItems.forEach(item => {
                     item.classList.add('active');
                 });
-            } else if(this.touchstartx < 250 && this.swipeDirection === 'left') {
+            } else if(this.touchstartx < 400 && this.swipeDirection === 'left') {
                 this.leftMenu.classList.remove('active');
                 this.leftMenuItems.forEach(item => {
                     item.classList.remove('active');
