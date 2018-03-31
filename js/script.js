@@ -669,21 +669,22 @@ Enemy.prototype.update = function() {
         }
     }
     //Collision detection for the lightning
+    /*
     for(let i=0;i<model.lightning.length;i++) {
         let lightning = model.lightning[i];
-        if (this.x < lightning.randomX + 25 &&
-           this.x + this.width > lightning.randomX &&
-           this.y < lightning.randomY + 25 &&
-           this.height + this.y > lightning.randomY) {
+        console.log(lightning)
+        if (this.x < lightning.targetX + 25 &&
+           this.x + this.width > lightning.targetX &&
+           this.y < lightning.targetY + 25 &&
+           this.height + this.y > lightning.targetY) {
             model.lightning[0].drawExplosion();
             window.setTimeout(this.removeLightning.bind(this),100);
         }
-    }
+    }*/
     this.removeLightning = function() {
         let index = model.lightning.indexOf(lightning);
         model.lightning.splice(index,1);
         this.destroyed = true;
-        console.log('lightning damage')
         let particleIndex = model.enemies.indexOf(this);
         model.enemies.splice(particleIndex,1);
     }
@@ -719,7 +720,8 @@ let Lightning = function(originX,originY,targetX,targetY) {
     this.paths = [];
     this.randomX = this.originX;
     this.randomY = this.originY;
-    //Explostion properties
+    //Explosion properties
+    this.blastRadius = 15;
     this.frameIndexExplosion = 0;
     this.tickCountExplosion = 0;
     this.numberOfExplosionFrames = 6;
@@ -769,6 +771,19 @@ Lightning.prototype.update = function() {
         this.beginExplosion = true;
     }    
     if(this.beginExplosion === true) {
+        model.enemies.forEach(e => {
+            for(let i=0;i<model.enemies.length;i++) {
+                let enemies = model.enemies[i];
+                if (this.targetX < enemies.x + 15 &&
+                   this.targetX + this.blastRadius > enemies.x &&
+                   this.targetY < enemies.y + 15 &&
+                   this.blastRadius + this.targetY > enemies.y) {
+                    console.log('collision')
+                    let particleIndex = model.enemies.indexOf(enemies);
+                    model.enemies.splice(particleIndex,1);
+                }
+            }
+        });
         this.tickCountExplosion += 1;
         if(this.tickCountExplosion > this.ticksPerExplosionFrame) {
             this.tickCountExplosion = 0;
