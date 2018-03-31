@@ -75,13 +75,19 @@ li {
 .info {
     color: black;
     position: absolute;
-    top: 20px;
+    top: 0;
     left: 5%;
+    display: flex;
+    flex-wrap: wrap;
 }
 .info li {
     display: inline-block;
 }
+.info--level, .info--speedTarget {
+    width: 100%;
+}
 .speed-meter {
+    display: inline-block;
     width: 100px;
     background: red;
     transition: .5s width;

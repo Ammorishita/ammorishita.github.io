@@ -12,6 +12,7 @@ function Model(player, enemies, lightning) {
     this.lightning = lightning;
     this.gameStarted = false;
     this.gamePaused = false;
+    this.gameLevel = 1;
 };
 Model.prototype = {
     createLightning: function(e) {
@@ -65,6 +66,8 @@ function View(canvas, model) {
     this.menuSubs = document.querySelectorAll('.menu--sub');
     // Heads up display    
     this.speedMeter = document.querySelector('.speed-meter');
+    this.gameLevel = document.querySelector('.level--value');
+    this.speedGoal = document.querySelector('.speed--goal');
     this.menuSlider = document.querySelector('.menu--controls');
     this.speedDisplayValue =  document.querySelector('.speed--info');
     this.gameOver = document.querySelector('#gameover');
@@ -96,12 +99,18 @@ View.prototype = {
                 this.model.enemies = [];
                 this.model.player.speed = 200;
                 this.speedDisplayValue.innerHTML = 200;
+                this.gameLevel.innerHTML = 1;
+                model.gameLevel = 1;
+                this.speedGoal.innerHTML = 300;
                 this.startGame();
                 break;
             case 'returnToMainMenu':
                 this.mainMenu.classList.remove('menu--disabled');
                 this.gameOver.classList.remove('active');
                 this.model.gamePaused = true;
+                this.gameLevel.innerHTML = 1;
+                model.gameLevel = 1;
+                this.speedGoal.innerHTML = 300;
                 this.menuSlider.classList.remove('game--active', 'active');
                 this.model.enemies = [];
                 this.model.player.speed = 200;
@@ -130,6 +139,8 @@ View.prototype = {
     startGame: function() {
         this.mainMenu.classList.add('menu--disabled');
         this.gameOver.classList.remove('active');
+        this.gameLevel.innerHTML = 1;
+        this.speedGoal.innerHTML = 300;
         this.model.gamePaused = false;
         model.enemies = [];
         this.addEnemies();
@@ -241,6 +252,13 @@ View.prototype = {
         }
         if(model.player.speed < 100) {
             this.gameOver.classList.add('active');
+        }
+        if(model.player.speed === model.player.speedTarget) {
+            model.player.speedTarget += 100;
+            model.gameLevel += 1;
+            model.player.gameLevel += 1;
+            this.speedGoal.innerHTML = model.player.speedTarget;
+            this.gameLevel.innerHTML = model.gameLevel;
         }
         this.speedMeterValue(player.speed);
     },
@@ -371,32 +389,29 @@ let options = {
     numberOfBackgroundFrames: 1,
     ticksPerBackgroundFrame: 3
 }
-let c = document.getElementById('canvas').getContext('2d');
+let c = canvas.getContext('2d');
 
 let Player = function(x,y,width,height,color,options) {
+    //Position properties
     this.x = x;
     this.y = y;
     this.xAfter = x;
     this.yAfter = y;
+    this.height = height;
+    this.width = width;
+    //Image properties
     this.image = sprite;
-    this.speed = 200;
     this.afterImageActive = true;
     this.imageJump = spriteJumping;
     this.background = background;
-    this.color = color;
-    this.width = width;
     this.spriteWidth = 750;
     this.xSize = width;
-    this.direction = 'straight';
     this.backgroundWidth = 2700;
     this.spriteHeight = 170;
     this.backgroundHeight = canvas.height;
-    this.height = height;
-    this.canJump = true;
     this.frameIndex = 0;
     this.rowIndex = 0;
     this.tickCount = 0;
-    this.phaseLevel = 1;
     this.canFireLightning = true;
     this.numberOfFrames = options.numberOfFrames || 1;
     this.numberOfRows = options.numberOfRows || 1;
@@ -405,9 +420,24 @@ let Player = function(x,y,width,height,color,options) {
     this.tickCountBG = 0;
     this.numberOfBackgroundFrames = options.numberOfBackgroundFrames || 1;
     this.ticksPerBackgroundFrame = options.ticksPerBackgroundFrame || 0;
+    //Attribute properties
+    this.speed = 290;
+    this.color = color;
+    this.direction = 'straight';
+    this.canJump = true;
+    this.phaseLevel = 1;
+    this.speedTarget = 300;
+    this.gameLevel = 1;
+
 };
 Player.prototype.draw = function(argument){
-    c.shadowBlur = 0;
+    if(this.gameLevel === 3) {
+        c.shadowBlur === 5;
+    } else if(this.gameLevel === 2) {
+        c.shadowBlur = 2;
+    } else {
+        c.shadowBlur = 0;
+    }
     c.shadowColor = 'yellow';
     c.drawImage(
            this.image,
@@ -650,7 +680,7 @@ Enemy.prototype.update = function() {
     }
     this.itemSpeed = Math.pow(this.y, 1.5)/this.randomNum(1400,2000);
 
-    //Basic collisions detection
+    //Collisions detection for items
     for(let i=0;i<model.enemies.length;i++) {
         let enemy = model.enemies[i];
         if (enemy.x < player.x + 72 &&
@@ -778,7 +808,6 @@ Lightning.prototype.update = function() {
                    this.targetX + this.blastRadius > enemies.x &&
                    this.targetY < enemies.y + 15 &&
                    this.blastRadius + this.targetY > enemies.y) {
-                    console.log('collision')
                     let particleIndex = model.enemies.indexOf(enemies);
                     model.enemies.splice(particleIndex,1);
                 }
