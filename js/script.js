@@ -245,10 +245,11 @@ View.prototype = {
         this.canvas.clearRect(0,0,this.width, this.height);
         this.canvas.fillStyle = 'skyblue';
         this.canvas.fillRect(0,0,this.width, this.height);
-        player.update();
+        background.update();
         lightning.forEach(e => { 
             e.update();
         });
+        player.update();
         if(model.gameStarted === true && enemies.length > 0) {
             enemies.forEach(e => {
                 e.update();
@@ -302,6 +303,10 @@ Controller.prototype = {
     resizeCanvas: function() {
         this.canvas.width = window.innerWidth;
         this.canvas.height = window.innerHeight;
+        this.view.width = window.innerWidth;
+        this.view.height = window.innerHeight;
+        this.model.player.y = window.innerHeight - 170;
+        console.log(this.canvas.width)
     },
     render: function() {
         //Checks the phone orientation
@@ -382,17 +387,11 @@ Controller.prototype = {
 let canvas = document.getElementById('canvas');
 canvas.width = canvas.clientWidth;
 canvas.height = canvas.clientHeight;
-let sprite = new Image();
-sprite.height = 200;
-let background = new Image();
-let spriteJumping = new Image();
+
 let powerItem = new Image();
 powerItem.src = 'images/power2.png';
 let negativePower = new Image();
 negativePower.src = 'images/negativePower.png';
-spriteJumping.src = 'images/sprite-jump.png';
-sprite.src = 'images/flash-sprite-final2.png';
-background.src = 'images/road.png';
 let colors = ['red','lime','dodgerblue','cyan'];
 
 let options = {
@@ -413,15 +412,14 @@ let Player = function(x,y,width,height,color,options) {
     this.height = height;
     this.width = width;
     //Image properties
-    this.image = sprite;
+    this.playerImage = new Image();
+    this.playerImage.src = 'images/flash-sprite-final2.png';
+    this.playerJumpImage = new Image();
+    this.playerJumpImage.src = 'images/sprite-jump.png';
     this.afterImageActive = true;
-    this.imageJump = spriteJumping;
-    this.background = background;
     this.spriteWidth = 750;
     this.xSize = width;
-    this.backgroundWidth = 2700;
     this.spriteHeight = 170;
-    this.backgroundHeight = canvas.height;
     this.frameIndex = 0;
     this.rowIndex = 0;
     this.tickCount = 0;
@@ -429,12 +427,8 @@ let Player = function(x,y,width,height,color,options) {
     this.numberOfFrames = options.numberOfFrames || 1;
     this.numberOfRows = options.numberOfRows || 1;
     this.ticksPerFrame = options.ticksPerFrame || 0;
-    this.frameIndexBG = 0;
-    this.tickCountBG = 0;
-    this.numberOfBackgroundFrames = options.numberOfBackgroundFrames || 1;
-    this.ticksPerBackgroundFrame = options.ticksPerBackgroundFrame || 0;
     //Attribute properties
-    this.speed = 290;
+    this.speed = 200;
     this.color = color;
     this.direction = 'straight';
     this.canJump = true;
@@ -471,7 +465,7 @@ Player.prototype.draw = function(argument){
     c.shadowColor = this.shadowColor;
     c.shadowBlur = this.shadowBlur;
     c.drawImage(
-           this.image,
+           this.playerImage,
            this.frameIndex * this.spriteWidth / this.numberOfFrames,
            this.rowIndex * this.spriteHeight,
            this.spriteWidth / this.numberOfFrames,
@@ -510,7 +504,7 @@ Player.prototype.afterImage = function() {
         c.shadowBlur = this.shadowBlur;
         c.shadowColor = this.shadowColor;
         c.drawImage(
-           this.imageJump,
+           this.playerJumpImage,
            0,
            0,
            this.spriteWidth / this.numberOfFrames,
@@ -522,7 +516,7 @@ Player.prototype.afterImage = function() {
     } else {
         //Draw the normal sprite afterimage if not jumping
         c.drawImage(
-               this.image,
+               this.playerImage,
                this.frameIndex * this.spriteWidth / this.numberOfFrames,
                0,
                this.spriteWidth / this.numberOfFrames,
@@ -537,24 +531,11 @@ Player.prototype.drawJumping = function() {
     c.shadowBlur = this.shadowBlur;
     c.shadowColor = this.shadowColor;
     c.drawImage(
-           this.imageJump,
+           this.playerJumpImage,
            this.x,
            this.y,
            125,
            170);
-};
-Player.prototype.drawBackground = function() {
-    c.shadowBlur = 0;
-    c.drawImage(
-           this.background,
-           this.frameIndexBG * this.backgroundWidth / this.numberOfBackgroundFrames,
-           0,
-           this.backgroundWidth / this.numberOfBackgroundFrames,
-           this.backgroundHeight,
-           0,
-           70,
-           this.backgroundWidth / this.numberOfBackgroundFrames,
-           this.backgroundHeight);
 };
 Player.prototype.update = function() {
     this.tickCount += 1;
@@ -616,8 +597,6 @@ Player.prototype.update = function() {
             this.canJump = true;
         }
     }
-    this.drawBackground();
-
     //Draw the after images while jumping or running.
     if(this.jumping === true || this.falling === true) {
         this.drawJumping();
@@ -629,6 +608,46 @@ Player.prototype.update = function() {
             this.afterImage();
         }
     }
+};
+
+/* =======================================
+======= BACKGROUND CANVAS ================
+=========================================*/
+
+let BackgroundCanvas = function() {
+    this.background = new Image();
+    this.background.src = 'images/road.png';
+    this.backgroundWidth = 2700;
+    this.backgroundHeight = canvas.height;
+    this.frameIndex = 0;
+    this.tickCount = 0;
+    this.numberOfBackgroundFrames = 1;
+    this.ticksPerBackgroundFrame = 3;
+};
+BackgroundCanvas.prototype.update = function() {
+    this.tickCount += 1;
+    if(this.tickCount > this.ticksPerBackgroundFrame) {
+        this.tickCount = 0;
+        if(this.frameIndex < this.numberOfBackgroundFrames - 1) {
+            this.frameIndex += 1;
+        } else if(this.frameIndex = this.numberOfBackgroundFrames) {
+            this.frameIndex = 0;
+        }
+    }
+    this.drawBackground();
+};
+BackgroundCanvas.prototype.drawBackground = function() {
+    c.shadowBlur = 0;
+    c.drawImage(
+           this.background,
+           this.frameIndex * this.backgroundWidth / this.numberOfBackgroundFrames,
+           0,
+           this.backgroundWidth / this.numberOfBackgroundFrames,
+           this.backgroundHeight,
+           0,
+           70,
+           this.backgroundWidth / this.numberOfBackgroundFrames,
+           this.backgroundHeight);
 };
 
 /* ==================================
@@ -823,7 +842,7 @@ Lightning.prototype.addLightning = function(x0,y0,x1,y1) {
     //lightning.push(new Laser(x,y));
 };
 Lightning.prototype.update = function() {
-    //Create the different points of the lightning bolt segments
+    //Create the different points of the lightning bolt segments}
     if(this.steps < 15) {
         let maxX = this.originX + (this.stepWidth * (this.steps) * this.direction);
         let minX = this.originX + (this.stepWidth * (this.steps-1) * this.direction)
@@ -838,6 +857,7 @@ Lightning.prototype.update = function() {
         this.beginExplosion = true;
     }    
     if(this.beginExplosion === true) {
+        //Detect collision for lightning bolts and items
         model.enemies.forEach(e => {
             for(let i=0;i<model.enemies.length;i++) {
                 let enemies = model.enemies[i];
@@ -851,6 +871,7 @@ Lightning.prototype.update = function() {
             }
         });
         this.tickCountExplosion += 1;
+        //The explosion animation
         if(this.tickCountExplosion > this.ticksPerExplosionFrame) {
             this.tickCountExplosion = 0;
             if(this.frameIndexExplosion < this.numberOfExplosionFrames - 1) {
@@ -870,7 +891,9 @@ Lightning.prototype.draw = function(color){
     c.strokeStyle='yellow';
     c.shadowColor = 'red';
     c.shadowBlur = 15;
-    c.moveTo(this.originX,this.originY);
+    this.currentPlayerX = model.player.x + (player.width/2);
+    this.currentPlayerY = model.player.y + (player.height/2);
+    c.moveTo(this.currentPlayerX, this.currentPlayerY);
     for(let i=0;i<this.paths.length;i++) {
         c.lineTo(this.paths[i].x, this.paths[i].y);
     }
@@ -891,28 +914,14 @@ Lightning.prototype.drawExplosion = function(){
 };
 
 let enemies = [];
-/*
-for(let i=0;i<3;i++) {
-    let enemyX = Math.floor(Math.random() * ((canvas.width/2 + 50) - (canvas.width/2 - 50)) + (canvas.width/2 - 50));
-    let enemyDx = Math.random() < 0.5 ? -.2 : .2;
-    let enemyDy = 1;
-    const radius = (Math.random() * 5) + 5;
-    let color;
-    let width = 5;
-    let image = 'images/power.png';
-    color = radius > 7.5 ? 'red' : 'blue';
-    if(color === 'blue') {
-        image = 'images/negativePower.png';
-    }
-    enemies.push(new Enemy(enemyX,50,radius,enemyDx,enemyDy,color,image,width));
-}*/
 let posX = canvas.offsetWidth/3;
-// let posY = canvas.offsetHeight - 170;
 let posY = window.innerHeight - 170;
 let lightning = [];
+let background = new BackgroundCanvas();
 let player = new Player(posX,posY,125,170,'black', options);
 let model = new Model(player, enemies, lightning);
 let view = new View(c, model);
 let controller = new Controller(model,view);
-controller.init();
+    controller.init();
+
 })();
