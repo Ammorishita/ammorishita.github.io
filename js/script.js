@@ -13,6 +13,8 @@ function Model(player, enemies, lightning) {
     this.gameStarted = false;
     this.gamePaused = false;
     this.gameLevel = 1;
+    this.itemSpeedMin = 1400;
+    this.itemSpeedMax = 2000;
 };
 Model.prototype = {
     createLightning: function(e) {
@@ -196,14 +198,13 @@ View.prototype = {
     beginTouchEvent: function(event) {
         this.touchstartx = event.touches[0].pageX;
         this.timestart = new Date().getTime();
-        console.log('start touch')
     },
     speedMeterValue: function(value) {
         this.speedMeter.style.width = value/5 + 'px';
     },
     touchEvent: function(event) {
-        this.touchmovex = event.touches[0].pageX;  
-        console.log('moving')  
+        this.touchmovex = event.touches[0].pageX;
+        this.swipeActive = true;  
     },
     endTouchEvent: function(event) {
         let moveDistance = this.touchstartx - this.touchmovex;
@@ -214,8 +215,7 @@ View.prototype = {
         }
         this.timeEnd = new Date().getTime();
         this.swipeTime = this.timeEnd - this.timestart;
-
-        if(this.swipeTime < 500) {
+        if(this.swipeTime < 500 && this.swipeActive === true) {
             if(this.touchstartx < 100 && this.swipeDirection === 'right') {
                 this.leftMenu.classList.add('active');
                 this.leftMenuItems.forEach(item => {
@@ -238,6 +238,8 @@ View.prototype = {
                 });
             }
         }
+        this.touchmovex = 0;
+        this.swipeActive = false;
     },
     render: function(enemies, lightning, player) {
         this.canvas.clearRect(0,0,this.width, this.height);
@@ -261,6 +263,12 @@ View.prototype = {
         if(model.player.speed === model.player.speedTarget) {
             model.player.speedTarget += 100;
             model.gameLevel += 1;
+            model.itemSpeedMin -= 200;
+            model.itemSpeedMax -= 200;
+            if(model.itemSpeedMin === 600) {
+                model.itemSpeedMin += 200;
+                model.itemSpeedMax += 200;
+            }
             model.player.gameLevel += 1;
             this.speedGoal.innerHTML = model.player.speedTarget;
             this.gameLevel.innerHTML = model.gameLevel;
@@ -433,17 +441,35 @@ let Player = function(x,y,width,height,color,options) {
     this.phaseLevel = 1;
     this.speedTarget = 300;
     this.gameLevel = 1;
+    this.shadowBlur = 0;
+    this.shadowColor = 'yellow';
 
 };
 Player.prototype.draw = function(argument){
-    if(this.gameLevel === 3) {
-        c.shadowBlur === 5;
-    } else if(this.gameLevel === 2) {
-        c.shadowBlur = 2;
-    } else {
-        c.shadowBlur = 0;
+    switch(this.gameLevel) {
+        case 1:
+            this.shadowBlur = 0;
+            break;
+        case 2:
+            this.shadowBlur = 1;
+            break;
+        case 3: 
+            this.shadowBlur = 2;
+            this.shadowColor = 'red';
+            break;
+        case 4:
+            this.shadowBlur = 3;
+            this.shadowColor = 'red';
+            break;
+        case 5:
+            this.shadowBlur = 5;
+            this.shadowColor = 'red';
+            break;
+        default:
+            break;
     }
-    c.shadowColor = 'yellow';
+    c.shadowColor = this.shadowColor;
+    c.shadowBlur = this.shadowBlur;
     c.drawImage(
            this.image,
            this.frameIndex * this.spriteWidth / this.numberOfFrames,
@@ -456,6 +482,8 @@ Player.prototype.draw = function(argument){
            this.spriteHeight);
 };
 Player.prototype.afterImage = function() {
+    c.shadowColor = this.shadowColor;
+    c.shadowBlur = this.shadowBlur;
     if(this.direction === 'left') {
         this.xSize += 1;
     } else if(this.direction === 'right') {
@@ -479,6 +507,8 @@ Player.prototype.afterImage = function() {
     }
     //Draw the jump sprite afterimage while jumping
     if(this.jumping === true || this.falling === true) {
+        c.shadowBlur = this.shadowBlur;
+        c.shadowColor = this.shadowColor;
         c.drawImage(
            this.imageJump,
            0,
@@ -504,6 +534,8 @@ Player.prototype.afterImage = function() {
     }
 };
 Player.prototype.drawJumping = function() {
+    c.shadowBlur = this.shadowBlur;
+    c.shadowColor = this.shadowColor;
     c.drawImage(
            this.imageJump,
            this.x,
@@ -683,8 +715,8 @@ Enemy.prototype.update = function() {
     this.randomNum = function(min,max) {
         return Math.floor(Math.random() * (max - min + 1) + min);
     }
-    this.itemSpeed = Math.pow(this.y, 1.5)/this.randomNum(1400,2000);
-
+    //this.itemSpeed = Math.pow(this.y, 1.5)/this.randomNum(1400,2000);
+    this.itemSpeed = Math.pow(this.y, 1.5)/this.randomNum(model.itemSpeedMin,model.itemSpeedMax);
     //Collisions detection for items
     for(let i=0;i<model.enemies.length;i++) {
         let enemy = model.enemies[i];
