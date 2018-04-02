@@ -14,6 +14,10 @@
 			<div class="menu--warning">
 				<h2 class="warning">Game must be played in landscape mode</h2>
 			</div>
+			<div class="menu--supported">
+				<h2 class="warning">Your device does not support orientation detection for player movement.</h2>
+				<a class="flex--center" href="https://developer.mozilla.org/en-US/docs/Web/API/Detecting_device_orientation">Device Orientation</a>
+			</div>
 			<div class="menu">
 				<div class="col--30 flex--center">
 					<div class="btn--container flex--col-center">
@@ -25,62 +29,66 @@
 				</div>
 				<div class="col--70 flex--center">
 					<div data-receiver="start" class="menu--sub menu--start active">
-						<img class="menu--logo" src="images/power.png" alt="Flash Logo" width="50%">
-						<p class="btn--start">Touch to start</p>
+						<h2>Lightspeed Runner</h2>
+						<p class="btn--start">Start</p>
 					</div>
 					<div data-receiver="objectives" class="menu--sub menu--objectives">
 						<p>Collect items and avoid enemies to increase your speed.  Reach the speed threshold for each level to advance. If your speed drops below 100 you lose.</p>
 						<div class="row">
 							<img src="images/power2.png" alt="Power Item">
-							<li>+10 speed bonus</li>
+							<li class="row--list">+10 speed bonus</li>
 						</div>
 						<div class="row">
 							<img src="images/negativePower.png" alt="Negative Power">
-							<li>-20 speed bonus</li>
+							<li class="row--list">-20 speed bonus</li>
 						</div>
 					</div>
-					<div data-receiver="about" class="menu--sub menu--about">
-						<p>This game was built using the HTML5 Canvas and vanilla javascript.</p>
-					</div>
-				</div>
-			</div>
-			<div data-receiver="controls" class="menu--sub menu--controls">
-				<div class="touchSlider-container">
-					<div class="slider-wrap">
-						<div class="slider" id="slider">
-							<div class="holder">
-								<div class="slide-wrapper">
-									<div class="slide">
-										<h2>Tilt your phone left and right to change direction.</h2>
-										<img src="images/controls-tilt.svg" alt="tilting phone">
-									</div>
-								</div>
-								<div class="slide-wrapper">
-									<div class="slide">
-										<h2>Quickly rotate the phone up and down to perform a jump.</h2>
-										<img src="images/controls-jump.svg" alt="jumping phone">
-									</div>
-								</div>
-								<div class="slide-wrapper">
-									<div class="slide">
-										<h2>Swipe from the left or right side of the screen to display additional in game options.</h2>
-										<img src="images/controls-swipe.svg" alt="phone swipe">
-										<div class="slide-image">
+					<div data-receiver="controls" class="menu--sub menu--controls">
+						<div class="touchSlider-container">
+							<div class="slider-wrap">
+								<div class="slider" id="slider">
+									<div class="holder">
+										<div class="slide-wrapper">
+											<div class="slide">
+												<h2>Tilt your phone left and right to change direction.</h2>
+												<img src="images/controls-tilt.svg" alt="tilting phone">
+											</div>
 										</div>
+										<div class="slide-wrapper">
+											<div class="slide">
+												<h2>Quickly pull the phone up and towards you to perform a jump.</h2>
+												<img src="images/controls-jump.svg" alt="jumping phone">
+											</div>
+										</div>
+										<div class="slide-wrapper">
+											<div class="slide">
+												<h2>Swipe from the left or right side of the screen to display additional in game options.</h2>
+												<img src="images/controls-swipe.png" alt="phone swipe">
+												<div class="slide-image">
+												</div>
+											</div>
+										</div>
+										<div class="slide-wrapper">
+											<div class="slide">
+												<h2>Tap the screen to launch a lightning strike.</h2>
+												<img src="images/lightning-strike.png" alt="Lightning Strike">
+												<div class="slide-image">
+												</div>
+											</div>
+										</div>								
 									</div>
 								</div>
 							</div>
 						</div>
 					</div>
-				</div>
-				<div class="menu--sub-content">
-					<li>Quickly rotate phone to jump.</li>
-				</div>
-				<div class="menu--sub-content">
-					<li>Tap the screen to use lightning.</li>
+					<div data-receiver="about" class="menu--sub menu--about">
+						<p>This game was built using the HTML5 Canvas and vanilla javascript.</p>
+						<a href="https://github.com/Ammorishita/ammorishita.github.io" target="_blank">Code on Github</a>
+					</div> 
 				</div>
 			</div>
-			<div id="gameover">
+
+				<div id="gameover">
 				<h1>You were too slow...</h1>
 				<div class="row flex--around">
 					<li data-function="startover" id="startover">Start Over</li>

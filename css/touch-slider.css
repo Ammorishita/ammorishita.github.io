@@ -14,7 +14,7 @@ html {
 }
 .touchSlider-container {
   position: relative;
-  height: 100%;
+  height: auto;
   width: 300px;
   margin: auto;
 }
@@ -147,7 +147,7 @@ html {
 .touchSlider-container .pagination li {
   width: 50px;
   height: 15px;
-  background: yellow;
+  background: cyan;
   border-radius: 15px;
   display: inline-block;
   margin: 0 .5rem;
@@ -156,5 +156,5 @@ html {
   cursor: pointer;
 }
 .touchSlider-container .pagination li.pagination-active {
-  background: red;
+  background: dodgerblue;
 }

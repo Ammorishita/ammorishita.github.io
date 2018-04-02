@@ -296,7 +296,12 @@ Controller.prototype = {
         this.fallingDown = false;
         this.canvas = this.view.canvas.canvas;
         window.addEventListener('resize', this.resizeCanvas.bind(this), false);
-        window.addEventListener('deviceorientation', this.checkRotation.bind(this), false);
+        if (window.DeviceOrientationEvent) {
+            window.addEventListener('deviceorientation', this.checkRotation.bind(this), false);
+        } else {
+            let supportMenu = document.querySelector('.menu--supported');
+            supportMenu.classList.add('active');
+        }
         window.setInterval(this.checkMotion.bind(this),16);
         this.canvas.addEventListener('click', this.weaponInit.bind(this), false);
     },
