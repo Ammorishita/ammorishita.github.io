@@ -142,13 +142,18 @@ View.prototype = {
         }
     },
     startGame: function() {
-        this.mainMenu.classList.add('menu--disabled');
-        this.gameOver.classList.remove('active');
-        this.gameLevel.innerHTML = 1;
-        this.speedGoal.innerHTML = 300;
-        this.model.gamePaused = false;
-        model.enemies = [];
-        this.addEnemies();
+        const width = window.innerWidth;
+        if (width > 1024) {
+            alert('This game is for mobile devices only.')
+        } else {
+            this.mainMenu.classList.add('menu--disabled');
+            this.gameOver.classList.remove('active');
+            this.gameLevel.innerHTML = 1;
+            this.speedGoal.innerHTML = 300;
+            this.model.gamePaused = false;
+            model.enemies = [];
+            this.addEnemies();
+        }
     },
     menuControls: function(e) {
         let target = e.target.getAttribute('data-target');

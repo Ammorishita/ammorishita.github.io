@@ -151,7 +151,7 @@ li {
     display: flex;
     justify-content: center;
     align-items: center;
-    background: url('../images/cover.png') 100%/100% no-repeat;
+    background: #000 url('../images/cover.png') 100%/100% no-repeat;
 }
 .menu--warning, .menu--supported {
     display: none;
@@ -342,5 +342,22 @@ li {
         z-index: 150;
         background: dodgerblue;
         height: 100%;
+    }
+}
+@media screen and (min-width: 1024px) {
+    .bg--canvasContainer {
+        width: 800px;
+        height: 600px;
+        margin: auto;
+    }
+    #canvas, .info {
+        display: none;
+    }
+    .flex--center {
+        align-items: center;
+    }
+    .menu--controls.active, .menu--sub.active {
+        height: 400px;
+        top: 80px;
     }
 }
