@@ -623,13 +623,13 @@ Player.prototype.update = function() {
 let BackgroundCanvas = function() {
     this.background = new Image();
     this.spaceBackground = new Image();
-    this.background.src = 'images/ring-sprite.png';
+    this.background.src = 'images/road-sprite.png';
     this.spaceBackground.src = 'images/space-background.png';
     this.backgroundWidth = 900;
-    this.backgroundHeight = 400;
+    this.backgroundHeight = 396;
     this.frameIndex = 0;
     this.tickCount = 0;
-    this.numberOfBackgroundFrames = 1;
+    this.numberOfBackgroundFrames = 10;
     this.ticksPerBackgroundFrame = 1;
     this.spaceBackgroundIndex = 0;
 };
@@ -651,26 +651,27 @@ BackgroundCanvas.prototype.update = function() {
 };
 BackgroundCanvas.prototype.drawBackground = function() {
     c.shadowBlur = 0;
+    console.log(this.spaceBackground.width, this.spaceBackground.height)
     c.drawImage(
         this.spaceBackground,
         this.spaceBackgroundIndex,
         0,
-        this.background.width,
-        this.background.height,
+        canvas.width,
+        this.spaceBackground.height,
         0,
         0,
-        this.background.width,
-        canvas.height / this.numberOfBackgroundFrames)
+        canvas.width,
+        canvas.height)
     c.drawImage(
            this.background,
            0,
-           this.frameIndex * (this.backgroundHeight / this.numberOfBackgroundFrames),
-           this.background.width,
-           this.background.height,
+           this.frameIndex * this.backgroundHeight,
+           this.backgroundWidth,
+           this.backgroundHeight,
            0,
            70,
            canvas.width,
-           canvas.height / this.numberOfBackgroundFrames)
+           canvas.height)
 };
 
 /* ==================================
