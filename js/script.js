@@ -13,8 +13,8 @@ function Model(player, enemies, lightning) {
     this.gameStarted = false;
     this.gamePaused = false;
     this.gameLevel = 1;
-    this.itemSpeedMin = 1400;
-    this.itemSpeedMax = 2000;
+    this.itemSpeedMin = 2500;
+    this.itemSpeedMax = 3000;
 };
 Model.prototype = {
     createLightning: function(e) {
@@ -28,7 +28,7 @@ Model.prototype = {
         this.lightning.push(new Lightning(x0,y0,x1,y1));
     },
     addEnemy: function() {
-        let enemyX = Math.floor(Math.random() * ((canvas.width/2 + 50) - (canvas.width/2 - 50)) + (canvas.width/2 - 50));
+        let enemyX = Math.floor(Math.random() * ((canvas.width/2 + 25) - (canvas.width/2 - 25) + 1) + (canvas.width/2 - 25));
         let enemyDx = Math.random() < 0.5 ? -.2 : .2;
         let enemyDy = 1;
         const radius = (Math.random() * 5) + 5;
@@ -39,7 +39,7 @@ Model.prototype = {
         if(color === 'blue') {
             image = 'images/negativePower.png';
         }
-        this.model.enemies.push(new Enemy(enemyX,50,radius,enemyDx,enemyDy,color,image,width));   
+        this.model.enemies.push(new Enemy(enemyX,70,radius,enemyDx,enemyDy,color,image,width));   
     }
 
 }
@@ -127,7 +127,7 @@ View.prototype = {
     },
     addEnemies: function() {
         for(let i=0;i<3;i++) {
-            let enemyX = Math.floor(Math.random() * ((canvas.width/2 + 50) - (canvas.width/2 - 50)) + (canvas.width/2 - 50));
+            let enemyX = Math.floor(Math.random() * ((canvas.width/2 + 25) - (canvas.width/2 - 25) + 1) + (canvas.width/2 - 25));
             let enemyDx = Math.random() < 0.5 ? -.2 : .2;
             let enemyDy = 1;
             const radius = (Math.random() * 5) + 5;
@@ -138,7 +138,7 @@ View.prototype = {
             if(color === 'blue') {
                 image = 'images/negativePower.png';
             }
-            this.model.enemies.push(new Enemy(enemyX,50,radius,enemyDx,enemyDy,color,image,width));  
+            this.model.enemies.push(new Enemy(enemyX,70,radius,enemyDx,enemyDy,color,image,width));  
         }
     },
     startGame: function() {
@@ -651,7 +651,6 @@ BackgroundCanvas.prototype.update = function() {
 };
 BackgroundCanvas.prototype.drawBackground = function() {
     c.shadowBlur = 0;
-    console.log(this.spaceBackground.width, this.spaceBackground.height)
     c.drawImage(
         this.spaceBackground,
         this.spaceBackgroundIndex,
@@ -705,9 +704,9 @@ Enemy.prototype.addEnemy = function() {
     if(color === 'blue') {
         image = 'images/negativePower.png';
     }
-    let x = Math.floor(Math.random() * ((canvas.width/2)))
+    let x = Math.floor(Math.random() * ((canvas.width/2 + 25) - (canvas.width/2 - 25) + 1) + (canvas.width/2 - 25));
     //let y = Math.random() * (canvas.height - radius * 2) + radius;
-    let y = 50;
+    let y = 70;
     //let dx = Math.random() * 2 + 2;
     let dx = 0;
     let dy = Math.random() * 3 + 2;
