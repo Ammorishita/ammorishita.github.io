@@ -184,6 +184,7 @@ View.prototype = {
                 this.model.gamePaused = !this.model.gamePaused;
                 this.menuSlider.classList.toggle('active');
                 this.menuSlider.classList.toggle('game--active');
+                this.leftMenu.classList.remove('active');
                 break;
             case 'perception':
                 break;
@@ -243,7 +244,7 @@ View.prototype = {
     },
     render: function(enemies, lightning, player) {
         this.canvas.clearRect(0,0,this.width, this.height);
-        this.canvas.fillStyle = 'skyblue';
+        this.canvas.fillStyle = 'black';
         this.canvas.fillRect(0,0,this.width, this.height);
         background.update();
         lightning.forEach(e => { 
@@ -621,16 +622,20 @@ Player.prototype.update = function() {
 
 let BackgroundCanvas = function() {
     this.background = new Image();
-    this.background.src = 'images/road.png';
-    this.backgroundWidth = 2700;
-    this.backgroundHeight = canvas.height;
+    this.spaceBackground = new Image();
+    this.background.src = 'images/ring-sprite.png';
+    this.spaceBackground.src = 'images/space-background.png';
+    this.backgroundWidth = 900;
+    this.backgroundHeight = 400;
     this.frameIndex = 0;
     this.tickCount = 0;
     this.numberOfBackgroundFrames = 1;
-    this.ticksPerBackgroundFrame = 3;
+    this.ticksPerBackgroundFrame = 1;
+    this.spaceBackgroundIndex = 0;
 };
 BackgroundCanvas.prototype.update = function() {
     this.tickCount += 1;
+    this.spaceBackgroundIndex += .25;
     if(this.tickCount > this.ticksPerBackgroundFrame) {
         this.tickCount = 0;
         if(this.frameIndex < this.numberOfBackgroundFrames - 1) {
@@ -639,20 +644,33 @@ BackgroundCanvas.prototype.update = function() {
             this.frameIndex = 0;
         }
     }
+    if(this.spaceBackgroundIndex > this.spaceBackground.width - canvas.width) {
+        this.spaceBackgroundIndex = 0;
+    }
     this.drawBackground();
 };
 BackgroundCanvas.prototype.drawBackground = function() {
     c.shadowBlur = 0;
     c.drawImage(
+        this.spaceBackground,
+        this.spaceBackgroundIndex,
+        0,
+        this.background.width,
+        this.background.height,
+        0,
+        0,
+        this.background.width,
+        canvas.height / this.numberOfBackgroundFrames)
+    c.drawImage(
            this.background,
-           this.frameIndex * this.backgroundWidth / this.numberOfBackgroundFrames,
            0,
-           this.backgroundWidth / this.numberOfBackgroundFrames,
-           this.backgroundHeight,
+           this.frameIndex * (this.backgroundHeight / this.numberOfBackgroundFrames),
+           this.background.width,
+           this.background.height,
            0,
            70,
-           this.backgroundWidth / this.numberOfBackgroundFrames,
-           this.backgroundHeight);
+           canvas.width,
+           canvas.height / this.numberOfBackgroundFrames)
 };
 
 /* ==================================

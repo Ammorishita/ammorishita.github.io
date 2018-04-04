@@ -78,7 +78,7 @@ li {
 /* ======= Heads Up Display ==
 =========================== */
 .info {
-    color: black;
+    color: cyan;
     position: absolute;
     top: 0;
     left: 5%;
@@ -209,7 +209,7 @@ li {
 }
 .menu--controls {
     display: block;
-    position: absolute;
+    position: relative;
     opacity: 0;
     top: 0;
     left: 0;
@@ -229,11 +229,13 @@ li {
     z-index: 100;
     left: auto;
     right: auto;
+    position: relative;
     pointer-events: auto;
     width: 100%;
     border: 1px solid dodgerblue;
     background: #000;
     opacity: .85;
+    height: 100vh;
 }
 .menu--controls.game--active {
     right: 150px;
@@ -245,6 +247,10 @@ li {
     font-size: 12px;
     padding: 5px;
     color: cyan;
+}
+.menu--overlay {
+    display: flex;
+    height: 0;
 }
 .menu--objectives {
     border: 1px solid dodgerblue;
