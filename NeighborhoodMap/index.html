@@ -1,0 +1,45 @@
+<<<<<<< HEAD
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Neighborhood Map Project</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/style1024.css" media="(max-width: 1024px)">
+    <link rel="stylesheet" href="css/style700.css" media="(max-width: 700px)">
+</head>
+<body>
+<div id="container">
+	<div class="sidebar">	
+		<div id="list">
+			<h3 class="center phone">BBQ Locations</h3>
+			<div class="center phone">
+				Filter: <input type="text" maxlength="64" data-bind="valueUpdate: keyup, textInput: searchTerm"><br>
+			</div>
+		    <ul id="list-items" data-bind="foreach: markerList, foreach: filter()">	    
+		    	<li data-bind= "text: title, click: $root.itemclick"></li>
+		    </ul>		
+		</div>
+		<div id="info">
+				<div class="weather-title" data-bind="">
+				<h3>What's the Weather?</h3>
+				<p data-bind= "visible: error">COULD NOT FIND THE WEATHER</p>
+				</div>
+				<div class="weather-results" data-bind= "foreach: weatherResults, visible: weather">
+				<p class="city" data-bind= "text: city"></p>	
+				<p class="temp" data-bind= "text: maintemp"></p>
+				<p class="clouds" data-bind= "text: clouds"></p>
+				<p class="wind" data-bind= "text: wind"></p>	
+				</div>			
+		</div>
+	</div>
+	<div id="map"></div>
+</div>
+<script src=js/libs/oauth-signature.min.js></script>
+<script src=js/libs/jquery-3.1.0.min.js></script>
+<script src=js/libs/knockout.js></script>
+<script src=js/script.js></script>
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCatwOtSkJSY7nh8RkkzXmY5xbLaXlLuaw&callback=init" onerror="googleError()"></script>
+</body>
+</html>

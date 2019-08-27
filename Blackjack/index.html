@@ -1,0 +1,62 @@
+<!Doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Blackjack</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<section>		
+	<div id="blackjack" class="bg game">
+	<h1>Blackjack</h1>
+	<div class="display--container">
+		<div class="screen">
+			<div class="dealer">
+				<li class="card--flipper card--dealer dealer--show">
+					<div class="card card--back"></div>
+					<div class="card dealer--front"></div>
+				</li>
+				<li class="card--flipper card--dealer dealer--hidden">
+					<div class="card card--back"></div>
+					<div class="card dealer--front"></div>
+				</li>
+			</div>
+			<div class="logs">
+				<li class="logItem" v-for="(item) in logs">
+					{{item.message}}
+				</li>
+			</div>
+			<div class="player">
+				<li class="card--flipper card--player">
+					<div class="card card--back"></div>
+					<div class="card player--front"></div>
+				</li>
+				<li class="card--flipper card--player">
+					<div class="card card--back"></div>
+					<div class="card player--front"></div>
+				</li>
+			</div>
+		</div>
+	</div>
+	<div class="controls">
+		<li v-on:click="stop">Stay</li>
+		<li v-on:click="start">Start</li>
+		<li class="btn--inactive" v-on:click="hit">Hit</li>
+	</div>
+	<div class="controls">
+		<div class="bet bet1" v-on:click="bet">Bet +1</div>			
+		<div class="bet bet5" v-on:click="bet">Bet +5</div>			
+	</div>
+	<div class="info">
+		<div class="dealer--score">Dealer Total: {{dealerTotal}}</div>
+		<div class="player--score">Player Total: {{playerTotal}}</div>
+		<div class="player--bet">Your Chips: {{playerChips}}</div>
+		<div class="player--bet">Your Bet: {{playerBet}}</div>		
+	</div>
+	</div>
+</section>
+<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+<script src="js/script.js"></script>
+</body>
+</html>

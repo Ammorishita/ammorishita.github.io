@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Title of the document</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="css/gamestyle.css">
+</head>
+
+<body>
+<div class="grid">
+	<div class="instructions">
+		<div class="submenu width-500 height-150">
+			<p style="color: Red">You are prototype maintenance bot.  A rogue mechanical orb has been appearing throughout the workplace at random.  Use all necessary force to remove it.</p>
+		</div>
+		<div class="submenu width-500 height-50">
+			<p>Use the <span style="color: Aqua">arrow keys</span> to move.</p>
+		</div>
+		<div class="submenu width-500 height-50">
+			<p>Press <span style="color: green">[Space Bar]</span> to fire.</p>
+		</div>
+		<div class="submenu width-500 height-50">
+			<p>Press <span style="color: Dodgerblue">[S]</span> to select between available weapons.</p>
+		</div>
+	</div>
+	<div class="player">
+	<img src="images/Hazard Orb.png" alt="">
+	</div>
+	<div class="enemy">
+	<img src="images/Enemy.png" alt="" class="orb">
+	</div>
+	<div class="notification">
+		<p>Gameover</p>
+	</div>
+	<img src="images/Explosion Default.png" alt="Explosion" width="100" class="effects">
+</div>
+<div class="menu">
+
+	<div class="submenu">
+		<div class="submenu width-100">
+			<div class="title">
+				<p>Health</p>
+			</div>
+			<div class="title">
+				<p style="color: Cyan">Enemy</p>
+			</div>
+		</div>
+		<div class="submenu width-150">
+			<div class="description playerHealth">
+				<div class="miniBox"></div>
+			</div>
+			<div class="description">
+				<div class="enemyHealth">
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<div class="submenu">
+		<div class="submenu width-150">
+			<div class="score">
+				<p>Level: 1</p>
+			</div>
+			<div class="gameplay">
+				<p>Menu</p>
+			</div>
+		</div>
+		<div class="submenu width-200">
+			<div class="description">
+				<p>Weapons:</p>
+			</div>
+			<div class="description">
+				<p>Inventory:</p>
+				
+			</div>
+		</div>
+	</div>
+
+	<div class="submenu">
+		<div class="submenu height-50 width-325">
+			<div class="plasma weapon item selected">
+				<img src="images/Flame1 item.png" alt="Flame" width='80'>
+			</div>
+			<div class="missile weapon item">
+				<img src="images/Missile1.png" alt="Flame" width='80'>
+			</div>
+			<div class="laser weapon item">
+				<img src="images/LaserBeam.png" alt="Laser" width='80'>
+			</div>
+		</div>
+		<div class="submenu height-50 width-325">
+			<div class="item">
+				<p>---</p>
+			</div>
+			<div class="item">
+				<p class="missileAmmo">x10</p>
+			</div>
+			<div class="item">
+				<p class="laserAmmo">x5</p>
+			</div>
+		</div>
+	</div>
+</div>
+
+	<script src="js/libs/jquery-3.1.0.min.js"></script>
+	<script src="js/game.js"></script>
+</body>
+
+</html>

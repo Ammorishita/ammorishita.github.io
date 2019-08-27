@@ -1,0 +1,163 @@
+html, body {
+    height: 100%;
+    background-color: black;
+}
+
+html {
+    display: table;
+    margin: auto;
+}
+#container {
+	width: 686px;
+	height: 100%;
+	background-color: black;
+	display: flex;
+	flex-wrap: wrap;
+	margin: auto;
+	justify-content: center;
+	border: 10px solid DodgerBlue;
+}
+#list {
+	width: 300px;
+	height: 380px;
+	background-color: Deepskyblue;
+	font-size: 1.5em;
+	color: Darkred;
+	margin: auto;
+	text-align: center;
+}
+#list ul {
+	background-color: #d3edf8;
+	overflow: auto;
+	height: 250px;
+	list-style-type: none;
+	width: 260px;
+	text-align: center;
+	display: inline-block;
+}
+#list li {
+	color: RoyalBlue;
+	list-style-type: none;
+	font-size: 18px;
+}
+#list li:hover {
+	color: white;
+	background-color: DarkBlue;
+	cursor: pointer;
+}
+#list-items {
+}
+
+#info {
+	width: 300px;
+	text-align: center;
+	margin: auto;
+}
+#info li {
+	text-align: center;
+}
+#infowindow {
+	width: 300px;
+	display: flex;
+	flex-wrap: wrap;
+}
+#map {
+	width: 95%;
+	height: 400px;
+}
+#wikilist li {
+	list-style-type: none;
+}
+.center {
+	text-align: center;
+}
+.city {
+	width: 300px;
+	background-color: Skyblue;
+	font-size: 1.25em;
+	line-height: 30px;
+}
+.clouds {
+	width: 300px;
+	background-color: white;
+	font-size: 18px;
+	line-height: 25px;
+}
+.gm-style-iw {
+   width: 300px !important;
+   top: 0 !important;
+   left: 0 !important;  
+   background-color: white;
+}
+.icon {
+	width: 50px;
+	height: 50px;
+	background-color: purple;
+}
+.infowindow-image {
+	background-color: white;
+	width: 100px;
+	height: 100px;
+}
+.infowindow-link {
+	background-color: DodgerBlue;
+	width: 300px;
+	word-wrap: break-word;
+	padding: 5px 0px 0px 5px;
+	color: black;
+	border-bottom: 3px solid black;
+	border-right: 3px solid black;
+	margin: auto;
+}
+.infowindow-link a {
+	color: DarkBlue;
+	font-weight: bold;
+}
+.infowindow-snippet {
+	background-color: AliceBlue;
+	color: Navy;
+	width: 190px;
+	font-weight: bold;
+	word-wrap: break-word;
+	padding: 0px 5px;
+	margin: auto;
+}
+.infowindow-title {
+	background-color: DodgerBlue;
+	width: 300px;
+	color: white;
+	border-top: 3px solid black;
+	border-left: 3px solid black;
+}
+.sidebar {
+	min-width: 100%;
+	margin: auto;
+	background-color: black;
+}
+.temp {
+	background-color: Aqua;
+	font-size: 18px;
+	width: 300px;
+}
+.weather-results {
+	width: 294px;
+	height: 105px;
+	background-color: white;
+	border: 3px solid black;
+	display: flex;
+	flex-wrap: wrap;
+	position: relative;
+}
+.weather-results p {
+	margin: 0;
+}
+.weather-title {
+	background-color: Deepskyblue;
+	text-align: center;
+	margin: auto; 
+}
+.wind {
+	width: 300px;
+	background-color: Dodgerblue;
+	font-size: 18px;
+}

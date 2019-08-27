@@ -1,0 +1,160 @@
+* {
+  font-family: Roboto, sans-serif;
+}
+html {
+  background: #000;
+}
+/* ---- Coin Gambler
+---------------------------- */
+
+#blackjack h1 {
+  text-align: center;
+}
+#blackjack .info {
+  margin: 0 auto;
+  width: 300px;
+  text-align: center;
+  border: 1px solid white;
+}
+#blackjack .betting {
+  display: flex;
+}
+#blackjack .bet {
+  border-radius: 3px;
+  background-color: Lime;
+  margin: 0 .5rem;
+  color: navy;
+  width: 5rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+#blackjack .bet:hover {
+  cursor: pointer;
+  background: rgba(211,255,87,1);
+}
+#blackjack .display--container {
+  display: flex;
+  justify-content: center;
+}
+#blackjack .logs {
+  width: 300px;
+  overflow: auto;
+  border: 1px solid cyan;
+  height: 200px;
+  background-color: #000;
+}
+#blackjack .logItem {
+  color: cyan;
+  margin: .5rem;
+  text-align: left;
+}
+.btn--inactive {
+  pointer-events: none;
+}
+.card {
+  width: 50px;
+  height: 80px;
+  background-color: red;
+  color: #fff;
+}
+.card--back, .player--front, .dealer--front {
+  backface-visibility: hidden;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 50px;
+  height: 75px;
+}
+.card--back {
+  background-color: red;
+  color: #000;
+  transform: rotateY(0deg);
+  background: url(../images/playingCard.png) center/contain no-repeat;
+}
+.card--dealer, .card--player {
+  width: 50px;
+  height: 80px;
+}
+.card--flipped {
+  transform: rotateY(180deg);
+}
+.card--flipper {
+  transform-style: preserve-3d;
+  transition: transform .6s;
+  transform-origin: 50%;
+  margin: 0 .5rem;
+}
+.dealer--front, .player--front {
+  background-color: white;
+  color: red;
+  z-index: 2;
+  transform: rotateY(180deg);
+  background: url(../images/spritesheet-normal.png) 0 0 no-repeat;
+}
+.controls {
+  width: 300px;
+  height: 50px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+.controls li {
+  width: 70px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  border-radius: 10px;
+  color: black;
+  justify-content: center;
+}
+.controls li:hover {
+  cursor: pointer;
+}
+.controls li:first-child {
+  background: dodgerblue;
+}
+.controls li:first-child:hover {
+  background: rgba(64,103,242,1);
+}
+.controls li:nth-child(2) {
+  background: cyan;
+}
+.controls li:nth-child(2):hover {
+  background: rgba(0,176,201,1);
+}
+.controls li:last-child {
+  background: red;
+}
+.controls li:last-child:hover {
+  background: rgba(182,18,0,1);
+}
+.disabled {
+  pointer-events: none;
+}
+.dealer, .player {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  justify-content: center;
+}
+.game {
+  color: red;
+}
+.screen {
+  border: 20px solid rgb(181,105,60);
+  background-color: rgb(0,128,0);
+  width: 800px;
+  height: 450px;
+  border-radius: 100px 100px 300px 300px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}

@@ -1,0 +1,254 @@
+body {
+  background-color: black; }
+
+p {
+  margin: 0;
+  padding: 0; }
+
+.player {
+  width: 100px;
+  height: 100px;
+  position: absolute;
+  top: 300px;
+  left: 0px;
+  transition-property: transform;
+  transition-duration: 2s;
+  animation-name: rotate;
+  animation-duration: 2s;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear; }
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg); }
+  to {
+    transform: rotate(360deg); } }
+.description {
+  width: 250px;
+  height: 50px; }
+  .description p {
+    text-align: center;
+    color: Dodgerblue;
+    font-size: 32px; }
+
+.effects {
+  width: 100px;
+  height: 100px;
+  position: absolute;
+  z-index: 1000; }
+
+.enemy {
+  width: 100px;
+  height: 100px;
+  position: absolute;
+  left: 900px;
+  top: 300px;
+  z-index: 10; }
+
+.enemyWeapon {
+  width: 98px;
+  height: 98px;
+  position: absolute;
+  transition-property: transform;
+  transition-duration: 4s;
+  animation-name: rotate;
+  animation-duration: 4s;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+  z-index: 1; }
+
+.gameplay {
+  color: white;
+  font-size: 32px;
+  width: 100px;
+  height: 50px;
+  margin: auto;
+  line-height: 50px;
+  text-align: center; }
+  .gameplay:hover {
+    cursor: pointer;
+    color: Dodgerblue; }
+
+.grid {
+  width: 1000px;
+  height: 700px;
+  border: 1px solid dodgerblue;
+  margin: auto;
+  display: flex;
+  flex-wrap: wrap;
+  position: relative; }
+
+.gridBox {
+  width: 98px;
+  height: 98px;
+  border: 1px solid dodgerblue; }
+
+.gridBoxMini {
+  width: 98px;
+  height: 98px;
+  position: absolute; }
+
+.instructions {
+  width: 550px;
+  height: auto;
+  border: 3px solid Cyan;
+  margin: auto;
+  position: absolute;
+  z-index: 1000;
+  background-color: black;
+  display: flex;
+  opacity: 0;
+  flex-wrap: wrap;
+  color: Dodgerblue;
+  left: 250px;
+  top: 200px;
+  text-align: center; }
+  .instructions p {
+    font-size: 24px;
+    opacity: 1;
+    color: white;
+    padding: 10px; }
+
+.item {
+  width: 100px;
+  height: 50px;
+  margin: auto;
+  border: 1px solid black; }
+  .item img {
+    position: relative;
+    top: 50%;
+    left: 50%;
+    margin: 0px -40px;
+    transform: translateY(-50%); }
+  .item p {
+    color: Dodgerblue;
+    font-size: 32px;
+    text-align: center; }
+
+.laserBox, .laserBoxReverse {
+  position: absolute;
+  height: 98px;
+  width: 98px; }
+
+.laserItem, .missileItem {
+  width: 98px;
+  height: 98px;
+  position: absolute;
+  transition-property: transform;
+  transition-duration: 8s;
+  animation-name: rotate;
+  animation-duration: 8s;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear; }
+
+.menu {
+  width: 1000px;
+  height: 120px;
+  border: 2px solid purple;
+  display: flex;
+  margin: auto;
+  margin-top: 10px;
+  position: relative; }
+
+.miniBox {
+  width: 150px;
+  height: 30px;
+  background-color: DodgerBlue;
+  margin: 1px;
+  display: inline-block;
+  opacity: 1;
+  position: relative; }
+
+.notification {
+  position: absolute;
+  width: 400px;
+  height: 300px;
+  background-color: black;
+  border: 3px solid red;
+  left: 300px;
+  top: 200px;
+  text-align: center;
+  color: red;
+  font-size: 5em;
+  opacity: 0; }
+
+.enemyHealth {
+  width: 150px;
+  background-color: cyan;
+  height: 35px;
+  margin: 5px 0px; }
+
+.rotate {
+  -ms-transform: rotate(180deg);
+  /* IE 9 */
+  -webkit-transform: rotate(180deg);
+  /* Chrome, Safari, Opera */
+  transform: rotate(180deg); }
+
+.player {
+  z-index: 1000; }
+
+.score {
+  width: 120px;
+  height: 50px;
+  color: white;
+  font-size: 32px;
+  text-align: center; }
+
+.selected {
+  -webkit-box-shadow: 0px 0px 26px 0px #0362f0;
+  -moz-box-shadow: 0px 0px 26px 0px #0362f0;
+  box-shadow: 0px 0px 26px 0px #0362f0;
+  border: 1px solid Dodgerblue; }
+
+.submenu {
+  margin: auto;
+  height: 100px;
+  width: 350px;
+  display: flex;
+  flex-wrap: wrap; }
+  .submenu p {
+    margin: auto; }
+
+.height-50 {
+  height: 50px; }
+
+.height-150 {
+  height: 150px; }
+
+.width-500 {
+  width: 500px; }
+
+.width-350 {
+  width: 350px; }
+
+.width-325 {
+  width: 325px; }
+
+.width-300 {
+  width: 300px; }
+
+.width-250 {
+  width: 250px; }
+
+.width-200 {
+  width: 200px; }
+
+.width-150 {
+  width: 125px; }
+
+.width-100 {
+  width: 100px; }
+
+.title {
+  width: 125px;
+  height: 50px;
+  display: block; }
+  .title p {
+    color: DodgerBlue;
+    text-align: center;
+    font-size: 32px;
+    margin: 0;
+    padding: 0; }
+
+/*# sourceMappingURL=gamestyle.css.map */
