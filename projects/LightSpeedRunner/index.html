@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Alex Morishita - Developer</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/touch-slider.css">
+  <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+</head>
+<body>
+	<main>
+		<section class="bg--canvasContainer">
+			<div class="menu--warning">
+				<h2 class="warning">Game must be played in landscape mode</h2>
+			</div>
+			<div class="menu--supported">
+				<h2 class="warning">Your device does not support orientation detection for player movement.</h2>
+				<a class="flex--center" href="https://developer.mozilla.org/en-US/docs/Web/API/Detecting_device_orientation">Device Orientation</a>
+			</div>
+			<div class="menu">
+				<div class="col--30 flex--center">
+					<div class="btn--container flex--col-center">
+						<li class="btn--menu active" data-target="start">Main Menu</li>
+						<li class="btn--menu" data-target="controls">Controls</li>
+						<li class="btn--menu" data-target="objectives">Objectives</li>
+						<li class="btn--menu" data-target="about">About</li>
+					</div>
+				</div>
+				<div class="col--70 flex--center">
+					<div data-receiver="start" class="menu--sub menu--start active">
+						<h2>Lightspeed Runner</h2>
+						<p class="btn--start">Start</p>
+					</div>
+					<div data-receiver="objectives" class="menu--sub menu--objectives">
+						<p>Collect items and avoid enemies to increase your speed.  Reach the speed threshold for each level to advance. If your speed drops below 100 you lose.</p>
+						<div class="row">
+							<img src="images/power2.png" alt="Power Item">
+							<li class="row--list">+10 speed bonus</li>
+						</div>
+						<div class="row">
+							<img src="images/negativePower.png" alt="Negative Power">
+							<li class="row--list">-20 speed bonus</li>
+						</div>
+					</div>
+					<div data-receiver="about" class="menu--sub menu--about">
+						<p>This game was built using the HTML5 Canvas and vanilla javascript.</p>
+						<a href="https://github.com/Ammorishita/ammorishita.github.io" target="_blank">Code on Github</a>
+					</div> 
+				</div>
+			</div>
+			<div class="menu--overlay">
+				<div class="col--30"></div>
+				<div class="col--70">
+					<div data-receiver="controls" class="menu--sub menu--controls">
+						<div class="touchSlider-container">
+							<div class="slider-wrap">
+								<div class="slider" id="slider">
+									<div class="holder">
+										<div class="slide-wrapper">
+											<div class="slide">
+												<h2>Tilt your phone left and right to change direction.</h2>
+												<img src="images/controls-tilt.svg" alt="tilting phone">
+											</div>
+										</div>
+										<div class="slide-wrapper">
+											<div class="slide">
+												<h2>Quickly pull the phone up and towards you to perform a jump.</h2>
+												<img src="images/controls-jump.svg" alt="jumping phone">
+											</div>
+										</div>
+										<div class="slide-wrapper">
+											<div class="slide">
+												<h2>Swipe from the left or right side of the screen to display additional in game options.</h2>
+												<img src="images/controls-swipe.png" alt="phone swipe">
+												<div class="slide-image">
+												</div>
+											</div>
+										</div>
+										<div class="slide-wrapper">
+											<div class="slide">
+												<h2>Tap the screen to launch a lightning strike.</h2>
+												<img src="images/lightning-strike.png" alt="Lightning Strike">
+												<div class="slide-image">
+												</div>
+											</div>
+										</div>								
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+				<div id="gameover">
+				<h1>You were too slow...</h1>
+				<div class="row flex--around">
+					<li data-function="startover" id="startover">Start Over</li>
+					<li data-function="returnToMainMenu" id="returnToMainMenu">Main Menu</li>
+				</div>
+			</div>
+			<canvas id="canvas">
+			</canvas>
+			<div class="menu--alt menu--left">
+				<img src="images/menu-weapons.svg" alt="Weapons Menu">
+				<div class="menu--weapon-container">
+					<li class="menu--weapon-title">Inventory</li>
+					<li class="menu--weapon-lightning">Lightning Charges</li>
+				</div>
+			</div>
+			<div class="menu--alt menu--right">
+				<li class="function--quit">
+					<img data-function="quit" class="menu--item menu--item-right" src="images/menu-quit.svg" alt="Menu Quit">
+				</li>
+				<li class="function--pause">
+					<img data-function="pause" class="menu--item menu--item-right" src="images/menu-pause.svg" alt="Menu Pause">
+				</li>
+				<li class="function--controls">
+					<img data-function="controls" class="menu--item menu--item-right" src="images/menu-controls.svg" alt="Menu Controls">
+				</li>
+			</div>
+			<div class="info">
+				<li class="info--level">LeveL: <span class="level--value"></span></li>
+				<li class="info--speedTarget">Speed Goal: <span class="speed--goal"></span></li>
+				<li>Speed(mph): <span class="speed--info"></span><span class="speed-meter"></span></li>
+			</div>
+		</section>
+		
+	</main>
+
+<script src="js/script.js"></script>
+<script src="js/touch-slider.js"></script>
+</body>
+</html>
