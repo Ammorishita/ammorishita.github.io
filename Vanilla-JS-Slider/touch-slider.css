@@ -15,13 +15,13 @@ html {
 }
 .touchSlider-container {
   position: relative;
-  height: 500px;
-  width: 800px;
+  height: 350px;
+  width: 100%;
+  max-width: 800px;
   margin: auto;
 }
 .touchSlider-container .slider-wrap {
-  width: 600px;
-  height: 400px;
+  width: 100%;
   position: relative;
   border: 2px solid dodgerblue;
   margin-left: auto;
@@ -66,7 +66,7 @@ html {
   width: 33.3333%;
   height: 100%;
   float: left;
-  height: 500px;
+  height: 350px;
   position: relative;
   overflow: hidden;
   background: dodgerblue;
@@ -105,8 +105,7 @@ html {
 }
 
 .touchSlider-container .slide div {
-  width: 300px;
-  height: 500px;
+  width: 100%;
   z-index: 0;
 }
 .touchSlider-container .arrow-nav {
@@ -158,4 +157,8 @@ html {
 }
 .touchSlider-container .pagination li.pagination-active {
   background: lime;
+}
+
+@media (min-width: 48em) {
+
 }

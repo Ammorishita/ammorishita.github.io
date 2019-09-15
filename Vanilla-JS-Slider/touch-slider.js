@@ -172,7 +172,8 @@ if (!String.prototype.includes) {
         this.el.holder.style.width = this.slideCount*100 + '%';
         var wrapperWidth = parseInt(window.getComputedStyle(this.el.holder, null).getPropertyValue('width'));
         var sliderWrapperWidth = wrapperWidth/this.slideCount;
-        this.slideWrapperWidth = sliderWrapperWidth;
+		this.slideWrapperWidth = sliderWrapperWidth;
+		console.log(wrapperWidth, sliderWrapperWidth);
         for (var i=0;i<this.slideCount;i++) {
           this.el.slideWrappers[i].style.width = sliderWrapperWidth + 'px';
         }

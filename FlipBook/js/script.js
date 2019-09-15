@@ -3,14 +3,20 @@ const flipBook = {
 	init() {
 		this.settings();
 		this.setUpEvents();
-		this.buttonEvents();
+		this.buttonHandler = this.turnPage.bind(this);
+		this.buttonEvents(true);
 	},
 	settings() {
 		this.buttons = document.querySelectorAll('.pager');
 	},
-	buttonEvents() {
-		for(let i=0;i<this.buttons.length;i++) {
-			this.buttons[i].addEventListener('click', this.turnPage.bind(this));
+	buttonEvents(flag) {
+		const buttons = document.querySelectorAll('.pager');
+		for(let i=0;i<buttons.length;i++) {
+			if(flag) {
+				buttons[i].addEventListener('click', this.buttonHandler);
+			} else {
+				buttons[i].removeEventListener('click', this.buttonHandler);
+			}
 		}
 	},
 	setUpEvents() {
@@ -94,6 +100,7 @@ const flipBook = {
 		buttons.forEach((item) => {
 			item.classList.remove('active');
 		});
+		this.buttonEvents(false);
 		//set active button styling
 		target.classList.add('active');
 		//check if were going forward or previous
@@ -142,6 +149,7 @@ const flipBook = {
 				this.removeClones();
 				this.setPages();
 				targetBook.classList.add('current-book');
+				this.buttonEvents(true);
 			}, timing);
 		}
 	}
