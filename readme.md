@@ -12,3 +12,6 @@ Single page app that displays Yelp reviews from local restaurants.
 
 Vanilla JS Slider
 A lightweight vanilla js touch slider.
+
+
+https://github.com/Ammorishita/ammorishita.github.io
